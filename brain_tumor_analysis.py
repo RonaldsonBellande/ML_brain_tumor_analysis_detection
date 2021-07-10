@@ -54,4 +54,37 @@ warnings.filterwarnings('ignore')
 plt.style.use('ggplot')
 
 
+class util(object):
+
+    def __init__(self, name_of_new_directory = "brain_cancer_seperate"):
+        self.path = "/Data"
+        self.name_of_new_directory = name_of_new_directory
+        self.seperate_image_base_on_image()
+
+    def seperate_image_base_on_image(self):
+
+
+
+class brain_cancer_analysis(object):
+
+    def __init__(self):    
+        self.images = []
+        self.filename = []
+        self.image_file = []
+        self.label_name = []
+        self.number_classes = 2
+        self.path = "Data/"
+        self.valid_images = [".jpg",".png"]
+
+        for img in os.listdir(self.path):
+            ext = os.path.splitext(img)[1]
+            if ext.lower() not in self.valid_images:
+                continue
+            self.images.append(Image.open(os.path.join(self.path,img)))
+
+
+
+
+
+
 
