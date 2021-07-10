@@ -62,7 +62,7 @@ class util(object):
         self.seperate_image_base_on_image()
 
     def seperate_image_base_on_image(self):
-
+        os.mkdir(self.brain_cancer_seperate)
 
 
 class brain_cancer_analysis(object):
@@ -87,4 +87,6 @@ class brain_cancer_analysis(object):
 
 
 
-
+if __name__ == "__main__":
+    pass
+    
