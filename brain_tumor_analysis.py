@@ -56,13 +56,27 @@ plt.style.use('ggplot')
 
 class util(object):
 
-    def __init__(self, name_of_new_directory = "brain_cancer_seperate"):
+    def __init__(self, name_of_new_directory = "brain_cancer_seperate/"):
         self.path = "/Data"
         self.name_of_new_directory = name_of_new_directory
-        self.seperate_image_base_on_image()
 
-    def seperate_image_base_on_image(self):
-        os.mkdir(self.brain_cancer_seperate)
+
+
+    # TO create more nested folders you need to seperate he awway with - and that teels that it is a seperate folder
+    def seperate_image_base_on_image(self, nested_folders = "None", directory_name = "True - False"):
+        
+        directory_array = directory_name.split(" - ")
+        print(self.name_of_new_directory + directory_array[0])
+        if nested_folders == "None":
+            if os.path.isdir(self.name_of_new_directory) == False:
+                os.mkdir(self.name_of_new_directory)
+        else:
+            for i in range(len(directory_array)):
+                if os.path.isdir(str(self.name_of_new_directory + directory_array[i])) == False:
+                    os.mkdir(str(self.name_of_new_directory + directory_array[i]))
+
+               
+
 
 
 class brain_cancer_analysis(object):
@@ -88,5 +102,7 @@ class brain_cancer_analysis(object):
 
 
 if __name__ == "__main__":
-    pass
+
+    util_temp = util()
+    util_temp.seperate_image_base_on_image(nested_folders = "None1")
     
