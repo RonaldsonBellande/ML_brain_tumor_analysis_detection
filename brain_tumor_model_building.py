@@ -1,3 +1,5 @@
+# Copyright © 2021 Ronaldson Bellande
+
 from __future__ import print_function
 import cv2
 import numpy as np
@@ -225,8 +227,6 @@ class brain_cancer_analysis(object):
 
         self.model.compile(loss = "binary_crossentropy", optimizer="adam", metrics=["accuracy"])
 
-        # model created as a txt file
-        # self.model.summary(print_fn = self.save_model_summary())
 
 
     
@@ -260,6 +260,9 @@ class brain_cancer_analysis(object):
             with open(self.model_summary + "model1_summary_architecture.txt", "w+") as model:
                 with redirect_stdout(model):
                     self.model.summary()
+    
+    # Compile information
+    def  
 
 
 
