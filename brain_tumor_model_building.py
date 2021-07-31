@@ -60,7 +60,15 @@ from utilities import *
 
 class brain_cancer_analysis(object):
 
-    def __init__(self, number_classes = 2):    
+    def __init__(self, number_classes = 2):
+
+        """
+        False - 0
+        True - 1
+        Degree1 - 2
+        Degree2 - 3
+        """
+
         self.images = []
         self.filename = []
         self.image_file = []
@@ -84,6 +92,8 @@ class brain_cancer_analysis(object):
         # model informations
         self.model = None
 
+        self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
+
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [10, 50, 100]
         self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
@@ -100,6 +110,7 @@ class brain_cancer_analysis(object):
             # resize image
             self.resize_image_and_label_image(self.categories[0])
             self.resize_image_and_label_image(self.categories[1])
+        
 
         # Brain Cancer true, false, Degree1, Degree2
         elif self.number_classes == 4:
@@ -126,6 +137,9 @@ class brain_cancer_analysis(object):
 
         self.splitting_data_normalize()
         self.create_models_1()
+
+
+
 
 
     # Checks to see if the image is valid or not
