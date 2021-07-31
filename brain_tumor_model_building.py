@@ -48,6 +48,8 @@ import shutil
 import tensorflow as tf
 import matplotlib.image as img
 import os, os.path
+# FOr saving models
+from contextlib import redirect_stdout
 import shutil
 # from IPython import get_ipython
 from multiprocessing import Pool
@@ -60,7 +62,7 @@ from utilities import *
 
 class brain_cancer_analysis(object):
 
-    def __init__(self, number_classes = 2):
+    def __init__(self, number_classes = 2, model_type = "model1"):
 
         """
         False - 0
@@ -91,6 +93,9 @@ class brain_cancer_analysis(object):
 
         # model informations
         self.model = None
+        
+        # model summary path 
+        self.model_summary = "model_summary/"
 
         self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
 
@@ -98,8 +103,8 @@ class brain_cancer_analysis(object):
         self.epochs = [10, 50, 100]
         self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
         self.callbacks = keras.callbacks.EarlyStopping(monitor='val_acc', patience=4, verbose=1)
-
-
+        
+        self.create_model_type = model_type
         
         # Brain Cancer true or false
         if self.number_classes == 2:
@@ -136,7 +141,14 @@ class brain_cancer_analysis(object):
         self.label_name = self.label_name.reshape((len(self.image_file),1))
 
         self.splitting_data_normalize()
-        self.create_models_1()
+
+        if self.create_model_type == "model1":
+            self.create_models_1()
+        elif self.create_model_type == "model2":
+            self.create_models_2()
+
+        # Saving model summary
+        self.save_model_summary()
 
 
 
@@ -189,6 +201,7 @@ class brain_cancer_analysis(object):
     def create_models_1(self):
         
         self.model = Sequential()
+
         # First Hitten Layer with 64, 7, 7
         self.model.add(Conv2D(64,(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
         self.model.add(Activation('relu'))
@@ -212,6 +225,10 @@ class brain_cancer_analysis(object):
 
         self.model.compile(loss = "binary_crossentropy", optimizer="adam", metrics=["accuracy"])
 
+        # model created as a txt file
+        # self.model.summary(print_fn = self.save_model_summary())
+
+
     
     def create_models_2(self):
 
@@ -232,6 +249,19 @@ class brain_cancer_analysis(object):
         self.model.add(Activation('sigmoid'))
 
         self.model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
+
+        # model created as a txt file
+        self.save_model_summary()
+
+
+    # save the model summery as a txt file
+    def save_model_summary(self):
+        if self.create_model_type == "model1":
+            with open(self.model_summary + "model1_summary_architecture.txt", "w+") as model:
+                with redirect_stdout(model):
+                    self.model.summary()
+
+
 
     #  Training model 
     def train_model(self):
@@ -273,7 +303,7 @@ class brain_cancer_analysis(object):
 
 if __name__ == "__main__":
     
-    # Determin if you want to create new files, second augument is where you create a new folder
+    # Determine if you want to create new files, second augument is where you create a new folder
     util = utilities()
     if len(sys.argv) != 1:
         if sys.argv[1] == "create":
