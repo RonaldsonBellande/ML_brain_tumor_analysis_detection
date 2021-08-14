@@ -122,6 +122,7 @@ class brain_cancer_analysis(object):
                 print("error")
 
 
+
     # Split training data and testing Data and makes it random and normalized it
     def splitting_data_normalize(self):
         self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size = 0.15, random_state = 42)
@@ -136,6 +137,7 @@ class brain_cancer_analysis(object):
         self.X_train /= 255
         self.X_test = self.X_test.astype("float32")
         self.X_test /= 255
+
 
 
     def create_models_1(self):
@@ -240,34 +242,6 @@ class brain_cancer_analysis(object):
         plt.xlabel('epoch')
         plt.legend(['train', 'Validation'], loc='upper left')
         plt.show()
-
-
-if __name__ == "__main__":
-    
-    # Determine if you want to create new files, second augument is where you create a new folder
-    util = utilities()
-    if len(sys.argv) != 1:
-        if sys.argv[1] == "create":
-            util.seperate_image_base_on_image(nested_folders = "True")
-
-        # Seperate images base on names
-        if sys.argv[1] == "seperate":
-            util.seperate_image_into_file()
-
-
-    # Begin analysis
-    brain_analysis = brain_cancer_analysis()
-
-
-
-
-
-
-       
-
-
-
-
 
 
 
