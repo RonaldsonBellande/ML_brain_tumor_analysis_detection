@@ -14,4 +14,4 @@ if __name__ == "__main__":
 
 
     # Begin analysis
-    brain_analysis = brain_cancer_analysis()
+    brain_analysis = brain_cancer_building()

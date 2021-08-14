@@ -1,6 +1,6 @@
 from header_inputs import *
 
-class brain_cancer_analysis(object):
+class brain_cancer_building(object):
 
     def __init__(self, number_classes = 2, model_type = "model1"):
 
@@ -102,6 +102,7 @@ class brain_cancer_analysis(object):
                 continue
     
 
+
     # Resize images
     def resize_image_and_label_image(self, input_file):
         for image in os.listdir(self.true_path + input_file):
@@ -140,8 +141,9 @@ class brain_cancer_analysis(object):
 
 
 
+
     def create_models_1(self):
-        
+
         self.model = Sequential()
 
         # First Hitten Layer with 64, 7, 7
@@ -194,6 +196,8 @@ class brain_cancer_analysis(object):
         self.save_model_summary()
 
 
+
+
     # save the model summery as a txt file
     def save_model_summary(self):
         if self.create_model_type == "model1":
@@ -201,48 +205,6 @@ class brain_cancer_analysis(object):
                 with redirect_stdout(model):
                     self.model.summary()
     
-    # Compile information
-    def  
-
-
-
-    #  Training model 
-    def train_model(self):
-       
-        self.model = KerasClassifier(build_fn = ConvNeuralNetwork, verbose = 0)
-        grid = GridSearchCV(estimator = self.model, param_grid = self.param_grid, n_jobs = 1, cv = 3, verbose = 10)
-
-        self.brain_cancer_model = model.fit(self.X_train, self.Y_train,
-          batch_size=self.batch_size[2],
-          validation_split=0.15,
-          epochs=self.epochs[2],
-          callbacks=[self.callbacks],
-          shuffle=True)
-    
-    # Evaluate model
-    def evaluate_model(self):
-        evaluation = model.evaluate(X_test, Y_test, verbose=1)
-        print("Loss:", evaluation[0])
-        print("Accuracy: ", evaluation[1])
-
-
-    # PLotting model
-    def plot_model(self, brain_cancer_model):
-        plt.plot(brain_cancer_model.history['accuracy'])
-        plt.plot(brain_cancer_model.history['val_accuracy'])
-        plt.title('model accuracy')
-        plt.ylabel('accuracy')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'Validation'], loc='upper left')
-        plt.show()
-        plt.plot(brain_cancer_model.history['loss'])
-        plt.plot(brain_cancer_model.history['val_loss'])
-        plt.title('model loss')
-        plt.ylabel('loss')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'Validation'], loc='upper left')
-        plt.show()
-
 
 
 
