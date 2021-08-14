@@ -1,7 +1,4 @@
-import numpy as np
-import os
-import shutil
-
+from header_inputs import *
 
 class utilities(object):
 
