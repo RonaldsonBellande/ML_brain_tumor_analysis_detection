@@ -198,7 +198,7 @@ class brain_cancer_building(object):
 
 
 
-    # save the model summery as a txt file
+    # Save the model summery as a txt file
     def save_model_summary(self):
         if self.create_model_type == "model1":
             with open(self.model_summary + "model1_summary_architecture.txt", "w+") as model:
