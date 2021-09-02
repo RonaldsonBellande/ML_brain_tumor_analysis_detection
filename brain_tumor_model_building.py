@@ -2,7 +2,7 @@ from header_inputs import *
 
 class brain_cancer_building(object):
 
-    def __init__(self, number_classes = 2, model_type = "model1"):
+    def __init__(self, number_classes, model_type):
 
         """
         False - 0
@@ -23,7 +23,7 @@ class brain_cancer_building(object):
         self.valid_images = [".jpg",".png"]
         self.categories = ["False","True"]
         self.input_shape = None
-        self.advanced_categories = ["False", "True", "Degree1", "Degree2"]
+        self.advanced_categories = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
 
         # Split training data variables
         self.X_train = None
@@ -55,6 +55,8 @@ class brain_cancer_building(object):
 
         # Brain Cancer true, false, Degree1, Degree2
         elif self.number_classes == 4:
+
+            self.true_path = "brain_cancer_seperate_4/"
             # Check validity
             self.check_valid(self.advanced_categories[0])
             self.check_valid(self.advanced_categories[1])
@@ -110,9 +112,11 @@ class brain_cancer_building(object):
                 self.label_name.append(0)
             elif input_file == "True":
                 self.label_name.append(1)
-            elif input_file == "Degree1":
+            elif input_file == "glioma_tumor":
+                self.label_name.append(1)
+            elif input_file == "meningioma_tumor":
                 self.label_name.append(2)
-            elif input_file == "Degree2":
+            elif input_file == "pituitary_tumor":
                 self.label_name.append(3)
             else:
                 print("error")
@@ -138,10 +142,6 @@ class brain_cancer_building(object):
     def get_model(self):
         return self.model
 
-    def get_model_type(self):
-        return self.create_model_type
-
-
     def get_data(self):
         return self.X_train , self.Y_train, self.X_test, self.Y_test, self.Y_test_vec
 
@@ -151,10 +151,6 @@ class brain_cancer_building(object):
             return self.categories
         elif self.number_classes == 4:
             return self.advanced_categories
-
-
-    def get_number_classes(self):
-        return self.number_classes
 
 
     def create_models_1(self):
@@ -192,11 +188,11 @@ class brain_cancer_building(object):
 
         self.model = Sequential()
 
-        self.model.add(Conv2D(64, (3,3), input_shape = X_train.shape[1:]))
+        self.model.add(Conv2D(64, (7,7), input_shape = self.input_shape))
         self.model.add(Activation("relu"))
         self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
 
-        self.model.add(Conv2D(64, (3,3), input_shape = X_train.shape[1:]))
+        self.model.add(Conv2D(64, (3,3), input_shape = self.input_shape))
         self.model.add(Activation("relu"))
         self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
 
@@ -205,6 +201,10 @@ class brain_cancer_building(object):
 
         self.model.add(Dense(1))
         self.model.add(Activation('sigmoid'))
+
+        # last layer, output Layer
+        self.model.add(Flatten())
+        self.model.add(Dense(units = self.number_classes, activation = 'softmax', input_dim=2))
 
         self.model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
 
@@ -215,10 +215,10 @@ class brain_cancer_building(object):
 
         self.model = Sequential()
         
-        self.MyConv(model, first = True)
-        self.MyConv(model)
-        self.MyConv(model)
-        self.MyConv(model)
+        self.MyConv(first = True)
+        self.MyConv()
+        self.MyConv()
+        self.MyConv()
 
         self.model.add(Flatten())
         self.model.add(Dense(2))
@@ -230,13 +230,13 @@ class brain_cancer_building(object):
 
         
 
-    def MyConv(self, model, first = False):
+    def MyConv(self, first = False):
 
         if first == False:
             self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding='same'))
         else:
             self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding='same',
-                 input_shape = input_shape))
+                 input_shape = self.input_shape))
     
         self.model.add(Activation('relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -251,7 +251,7 @@ class brain_cancer_building(object):
     # Save the model summery as a txt file
     def save_model_summary(self):
 
-        with open(self.model_summary + self.create_model_type +"_summary_architecture.txt", "w+") as model:
+        with open(self.model_summary + self.create_model_type +"_summary_architecture_" + str(self.number_classes) +".txt", "w+") as model:
             with redirect_stdout(model):
                 self.model.summary()
 

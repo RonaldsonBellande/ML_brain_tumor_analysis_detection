@@ -21,4 +21,5 @@ if __name__ == "__main__":
 
         # Seperate images base on names
         if sys.argv[1] == "model_training":
+
             brain_analysis_obj = brain_tumor_training(number_classes = sys.argv[2], model_type = sys.argv[3])
