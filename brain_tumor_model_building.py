@@ -21,9 +21,9 @@ class brain_cancer_building(object):
         self.path = "Data/"
         self.true_path  = "brain_cancer_seperate/"
         self.valid_images = [".jpg",".png"]
-        self.categories = ["False","True"]
+        self.categories = ["No Brain Tumor","Brain Tumor"]
         self.input_shape = None
-        self.advanced_categories = ["False", "True", "Degree1", "Degree2"]
+        self.advanced_categories = ["No Brain Tumor", "Brain Tumor", "Degree1", "Degree2"]
 
         # Split training data variables
         self.X_train = None
@@ -39,11 +39,7 @@ class brain_cancer_building(object):
 
         self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
 
-        self.batch_size = [10, 20, 40, 60, 80, 100]
-        self.epochs = [10, 50, 100]
-        self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
-        self.callbacks = keras.callbacks.EarlyStopping(monitor='val_acc', patience=4, verbose=1)
-        
+
         self.create_model_type = model_type
         
         # Brain Cancer true or false
@@ -74,7 +70,7 @@ class brain_cancer_building(object):
         else:
             print("Detection Variety out of bounds")
 
-        
+
         # Numpy array
         self.image_file = np.array(self.image_file)
         self.label_name = np.array(self.label_name)
@@ -92,8 +88,6 @@ class brain_cancer_building(object):
 
 
 
-
-
     # Checks to see if the image is valid or not
     def check_valid(self, input_file):
         for img in os.listdir(self.true_path + input_file):
@@ -101,7 +95,6 @@ class brain_cancer_building(object):
             if ext.lower() not in self.valid_images:
                 continue
     
-
 
     # Resize images
     def resize_image_and_label_image(self, input_file):
@@ -140,6 +133,22 @@ class brain_cancer_building(object):
         self.X_test /= 255
 
 
+    def get_model(self):
+        return self.model
+
+    def get_model_type(self):
+        return self.create_model_type
+
+
+    def get_data(self):
+        return self.X_train , self.Y_train, self.X_test, self.Y_test, self.Y_test_vec
+
+    def get_categories(self):
+        # Number of categories
+        if self.number_classes == 2:
+            return self.categories
+        elif self.number_classes == 4:
+            return self.advanced_categories
 
 
     def create_models_1(self):
@@ -169,20 +178,21 @@ class brain_cancer_building(object):
 
         self.model.compile(loss = "binary_crossentropy", optimizer="adam", metrics=["accuracy"])
 
+        return self.model
 
 
     
     def create_models_2(self):
 
         self.model = Sequential()
-        self.model.add(Conv2D(64, (3,3), input_shape = X_train.shape[1:]))
-        self.model.add(Activation("relu"))
-        self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
 
         self.model.add(Conv2D(64, (3,3), input_shape = X_train.shape[1:]))
         self.model.add(Activation("relu"))
         self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
 
+        self.model.add(Conv2D(64, (3,3), input_shape = X_train.shape[1:]))
+        self.model.add(Activation("relu"))
+        self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
 
         self.model.add(Flatten())
         self.model.add(Dense(64))
@@ -192,18 +202,54 @@ class brain_cancer_building(object):
 
         self.model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
 
-        # model created as a txt file
-        self.save_model_summary()
+        return self.model
 
+
+    def create_model_3(self):
+
+        self.model = Sequential()
+        
+        self.MyConv(model, first = True)
+        self.MyConv(model)
+        self.MyConv(model)
+        self.MyConv(model)
+
+        self.model.add(Flatten())
+        self.model.add(Dense(2))
+        self.model.add(Activation('softmax'))
+
+        self.model.compile(loss = 'binary_crossentropy', optimizer ='adam', metrics= ['accuracy'])
+        
+        return self.model
+
+        
+
+    def MyConv(self, model, first = False):
+
+        if first == False:
+            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding='same'))
+        else:
+            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding='same',
+                 input_shape = input_shape))
+    
+        self.model.add(Activation('relu'))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Dropout(0.5))
+
+        self.model.add(Conv2D(32, (4, 4),strides = (1,1),padding='same'))
+        self.model.add(Activation('relu'))
+        self.model.add(Dropout(0.25))
 
 
 
     # Save the model summery as a txt file
     def save_model_summary(self):
-        if self.create_model_type == "model1":
-            with open(self.model_summary + "model1_summary_architecture.txt", "w+") as model:
-                with redirect_stdout(model):
-                    self.model.summary()
+
+        with open(self.model_summary + self.create_model_type +"_summary_architecture.txt", "w+") as model:
+            with redirect_stdout(model):
+                self.model.summary()
+
+
     
 
 

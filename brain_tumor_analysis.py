@@ -1,4 +1,5 @@
 from header_inputs import *
+from brain_tumor_model_training import *
 
 if __name__ == "__main__":
     
@@ -13,5 +14,11 @@ if __name__ == "__main__":
             util.seperate_image_into_file()
 
 
-    # Begin analysis
-    brain_analysis = brain_cancer_building()
+    # Begin analysis for building model or training it
+    if len(sys.argv) != 1:
+        if sys.argv[1] == "model_building":
+            brain_analysis_obj = brain_tumor_building()
+
+        # Seperate images base on names
+        if sys.argv[1] == "model_training":
+            brain_analysis_obj = brain_tumor_training()
