@@ -2,9 +2,9 @@ from header_inputs import *
 from brain_tumor_model_building import *
 
 class brain_tumor_training(object):
-    def __init__(self):
+    def __init__(self, number_classes = 2, model_type = "model1"):
         
-        brain_cancer_building_obj = brain_cancer_building()
+        brain_cancer_building_obj = brain_cancer_building(number_classes = number_classes, model_type = model_type)
         self.model = brain_cancer_building_obj.get_model()
         
         xy_data = brain_cancer_building_obj.get_data()
@@ -20,6 +20,8 @@ class brain_tumor_training(object):
         self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
         self.callbacks = keras.callbacks.EarlyStopping(monitor='val_acc', patience=4, verbose=1)
         
+        self.number_classes = brain_cancer_building_obj.get_number_classes()
+
         # Model
         self.model_categories = brain_cancer_building_obj.get_categories()
         
@@ -49,17 +51,18 @@ class brain_tumor_training(object):
                 callbacks=[self.callbacks],
                 shuffle=True)
         
-        self.model.save_weights("brain_tumor_categories_2_model.h5")
+        self.model.save_weights(self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
 
     # Evaluate model
     def evaluate_model(self):
         evaluation = self.model.evaluate(self.X_test, self.Y_test, verbose=1)
 
-        with open(self.model_type + "_evaluate_brain_tumor_category_2.txt", 'w') as write:
-            write.writelines(str(evaluation))
+        with open(self.model_type + "_evaluate_brain_tumor_category_" + str(self.number_classes) + ".txt", 'w') as write:
+            write.writelines("Loss: " + str(evaluation[0]))
+            write.writelines("Accuracy: " + str(evaluation[1]))
         
-        print("Loss:", evaluation[0])
+        print("Loss:", evaluation[0], "\n")
         print("Accuracy: ", evaluation[1])
 
 
@@ -74,7 +77,7 @@ class brain_tumor_training(object):
         plt.ylabel('accuracy')
         plt.xlabel('epoch')
         plt.legend(['train', 'Validation'], loc='upper left')
-        plt.savefig("graph/" + self.model_type + '_accuracy.png', dpi =500)
+        plt.savefig("graph/" + self.model_type + '_accuracy_' + str(self.number_classes) + '.png', dpi =500)
 
 
         plt.plot(self.brain_cancer_model.history['loss'])
@@ -83,7 +86,7 @@ class brain_tumor_training(object):
         plt.ylabel('loss')
         plt.xlabel('epoch')
         plt.legend(['train', 'Validation'], loc='upper left')
-        plt.savefig("graph/" + self.model_type + '_lost.png', dpi =500)
+        plt.savefig("graph/" + self.model_type + '_lost_' + str(self.number_classes) +'.png', dpi =500)
 
 
     def plot_random_examples(self):
@@ -95,8 +98,8 @@ class brain_tumor_training(object):
             plt.subplot(5,5,i+1)
             fig=plt.imshow(self.X_test[i,:,:,:])
             plt.axis('off')
-            plt.title("Predicted - {}".format(model_labels[predicted_classes[i]] ) + "\n Actual - {}".format(model_labels[self.Y_test_vec[i,0]] ),fontsize=3)
+            plt.title("Predicted - {}".format(self.model_categories[predicted_classes[i]] ) + "\n Actual - {}".format(self.model_categories[self.Y_test_vec[i,0]] ),fontsize=3)
             plt.tight_layout()
-            plt.savefig(self.model_type + '_prediction.png', dpi =500)
+            plt.savefig(self.model_type + '_prediction' + str(self.number_classes) + '.png', dpi =500)
 
 

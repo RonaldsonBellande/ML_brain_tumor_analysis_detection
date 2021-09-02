@@ -21,9 +21,9 @@ class brain_cancer_building(object):
         self.path = "Data/"
         self.true_path  = "brain_cancer_seperate/"
         self.valid_images = [".jpg",".png"]
-        self.categories = ["No Brain Tumor","Brain Tumor"]
+        self.categories = ["False","True"]
         self.input_shape = None
-        self.advanced_categories = ["No Brain Tumor", "Brain Tumor", "Degree1", "Degree2"]
+        self.advanced_categories = ["False", "True", "Degree1", "Degree2"]
 
         # Split training data variables
         self.X_train = None
@@ -82,6 +82,8 @@ class brain_cancer_building(object):
             self.create_models_1()
         elif self.create_model_type == "model2":
             self.create_models_2()
+        elif self.create_model_type == "model3":
+            self.create_model_3()
 
         # Saving model summary
         self.save_model_summary()
@@ -149,6 +151,10 @@ class brain_cancer_building(object):
             return self.categories
         elif self.number_classes == 4:
             return self.advanced_categories
+
+
+    def get_number_classes(self):
+        return self.number_classes
 
 
     def create_models_1(self):
