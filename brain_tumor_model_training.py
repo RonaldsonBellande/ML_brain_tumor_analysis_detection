@@ -9,7 +9,7 @@ class brain_tumor_training(object):
 
         brain_cancer_building_obj = brain_cancer_building(number_classes = self.number_classes, model_type = self.model_type)
         self.model = brain_cancer_building_obj.get_model()
-        
+        print("here")        
         xy_data = brain_cancer_building_obj.get_data()
 
         self.X_train = xy_data[0]

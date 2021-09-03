@@ -129,8 +129,8 @@ class brain_cancer_building(object):
 
         self.input_shape = self.X_train.shape[1:]
         
-        self.Y_train = keras.utils.to_categorical(self.Y_train_vec, self.number_classes)
-        self.Y_test = keras.utils.to_categorical(self.Y_test_vec, self.number_classes)
+        self.Y_train = tf.keras.utils.to_categorical(self.Y_train_vec, self.number_classes)
+        self.Y_test = tf.keras.utils.to_categorical(self.Y_test_vec, self.number_classes)
 
         # Normalize
         self.X_train = self.X_train.astype("float32")

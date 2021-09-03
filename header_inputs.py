@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import warnings
 import sys 
+from tensorflow import keras
 import tensorflow as tf
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.tree import DecisionTreeRegressor
@@ -44,6 +45,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 import matplotlib.pyplot as plt
 from keras import layers
+from tensorflow.keras.utils import to_categorical
 import glob
 import shutil
 import tensorflow as tf
