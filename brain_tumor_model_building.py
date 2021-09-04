@@ -169,10 +169,11 @@ class brain_cancer_building(object):
         self.model.add(MaxPooling2D(pool_size = (2,2)))
         self.model.add(Dropout(0.25))
     
-        # Third Hitten Layer 32, 7, 7
-        # self.model.add(Conv2D(16,(7,7), strides = (1,1), padding="same", activation = "relu"))
-        # self.model.add(MaxPooling2D(pool_size = (1,1)))
-        # self.model.add(Dropout(0.25))
+        # Third Hitten Layer 16, 7, 7
+        self.model.add(Conv2D(16,(7,7), strides = (1,1), padding="same", activation = "relu"))
+        self.model.add(Activation('relu'))
+        self.model.add(MaxPooling2D(pool_size = (1,1)))
+        self.model.add(Dropout(0.25))
     
         # last layer, output Layer
         self.model.add(Flatten())
@@ -221,8 +222,7 @@ class brain_cancer_building(object):
         self.MyConv()
 
         self.model.add(Flatten())
-        self.model.add(Dense(2))
-        self.model.add(Activation('softmax'))
+        self.model.add(Dense(units = self.number_classes, activation = 'softmax', input_dim=2))
 
         self.model.compile(loss = 'binary_crossentropy', optimizer ='adam', metrics= ['accuracy'])
         
@@ -233,7 +233,8 @@ class brain_cancer_building(object):
     def MyConv(self, first = False):
 
         if first == False:
-            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding='same'))
+            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding='same',
+                input_shape = self.input_shape))
         else:
             self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding='same',
                  input_shape = self.input_shape))

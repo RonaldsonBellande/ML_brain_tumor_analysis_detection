@@ -19,7 +19,7 @@ class brain_tumor_training(object):
         self.Y_test_vec = xy_data[4]
         
         self.batch_size = [10, 20, 40, 60, 80, 100]
-        self.epochs = [1, 5, 10, 50, 100]
+        self.epochs = [1, 5, 10, 50, 100, 200]
         self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
         self.callbacks = keras.callbacks.EarlyStopping(monitor='val_acc', patience=4, verbose=1)
         
@@ -32,9 +32,6 @@ class brain_tumor_training(object):
         self.plot_model()
         self.plot_random_examples()
 
-
-    # Compile information
-    # def grid_evaluation(self):
 
 
     #  Training model 
@@ -49,7 +46,7 @@ class brain_tumor_training(object):
         self.brain_cancer_model = self.model.fit(self.X_train, self.Y_train,
                 batch_size=self.batch_size[2],
                 validation_split=0.15,
-                epochs=self.epochs[4],
+                epochs=self.epochs[5],
                 callbacks=[self.callbacks],
                 shuffle=True)
 
@@ -57,7 +54,7 @@ class brain_tumor_training(object):
         start = "ending --: " 
         self.get_training_time(start)
         
-        self.model.save_weights(self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
+        self.model.save_weights("models/" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
 
     # Evaluate model
@@ -101,7 +98,7 @@ class brain_tumor_training(object):
         plt.figure( dpi=256)
         predicted_classes = self.model.predict_classes(self.X_test)
 
-        for i in range(10):
+        for i in range(25):
             plt.subplot(5,5,i+1)
             fig=plt.imshow(self.X_test[i,:,:,:])
             plt.axis('off')
