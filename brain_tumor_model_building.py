@@ -1,25 +1,38 @@
-from header_inputs import *
+from header_imports import *
 
 class brain_cancer_building(object):
 
-    def __init__(self, number_classes, model_type):
+    def __init__(self, number_classes, model_type, image_type):
 
         """
         False - 0
-        True - 1
-        Degree1 - 2
-        Degree2 - 3
+        glioma_tumor or False - 1
+        meningioma_tumor - 2
+        pituitary_tumor - 3
         """
 
         self.images = []
         self.filename = []
         self.image_file = []
+
         # 0 for False and 1 for True for label name
         self.label_name = []
         self.number_classes = number_classes
         self.image_size = 240
         self.path = "Data/"
-        self.true_path  = "brain_cancer_seperate/"
+        self.true_path  = "brain_cancer_category_2/"
+        self.image_type = image_type
+
+
+        # Determine
+        if self.image_type == "normal":
+            self.true_path = self.true_path + "brain_cancer_seperate_category_2/"
+        elif self.image_type == "edge_1":
+            self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_1/"
+        elif self.image_type == "edge_2":
+            self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_2/"
+
+
         self.valid_images = [".jpg",".png"]
         self.categories = ["False","True"]
         self.input_shape = None
@@ -56,7 +69,17 @@ class brain_cancer_building(object):
         # Brain Cancer true, false, Degree1, Degree2
         elif self.number_classes == 4:
 
-            self.true_path = "brain_cancer_seperate_4/"
+            self.true_path = "brain_cancer_category_4/"
+            
+            # Determine
+            if self.image_type == "normal":
+            	self.true_path = self.true_path + "brain_cancer_seperate_category_4/"
+            elif self.image_type == "edge_1":
+                self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_1/"
+            elif self.image_type == "edge_2":
+                self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_2/"
+
+            
             # Check validity
             self.check_valid(self.advanced_categories[0])
             self.check_valid(self.advanced_categories[1])
@@ -193,14 +216,22 @@ class brain_cancer_building(object):
         self.model.add(Activation("relu"))
         self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
 
-        self.model.add(Conv2D(64, (3,3), input_shape = self.input_shape))
+        self.model.add(Conv2D(32, (7,7), input_shape = self.input_shape))
+        self.model.add(Activation("relu"))
+        self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
+        
+        self.model.add(Conv2D(16, (7,7), input_shape = self.input_shape))
+        self.model.add(Activation("relu"))
+        self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
+        
+        self.model.add(Conv2D(8, (7,7), input_shape = self.input_shape))
         self.model.add(Activation("relu"))
         self.model.add(MaxPooling2D(pool_size = (2,2))) # Pooling
 
-        self.model.add(Flatten())
-        self.model.add(Dense(64))
+        self.model.add(Flatten())        
+        self.model.add(Dense(units = self.number_classes, activation = 'softmax', input_dim=2))
 
-        self.model.add(Dense(1))
+        self.model.add(Dense(units = self.number_classes, activation = 'softmax', input_dim=2))
         self.model.add(Activation('sigmoid'))
 
         # last layer, output Layer
