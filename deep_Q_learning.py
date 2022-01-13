@@ -2,7 +2,7 @@ from header_import import *
 
 
 class deep_q_learning_algorithm(DeepQLearning, plot_graphs):
-    def __init__(self, episode, noise=0.0, reward_noise=0.0, random_start=False, state_world_size=400, algorithm_name="deep_q_learning", transfer_learning="true"):
+    def __init__(self, episode, noise=0.0, reward_noise=0.0, random_start=False, state_world_size=400, algorithm_name="deep_q_learning", transfer_learning="true", image_base="false"):
         super().__init__(algorithm_name=algorithm_name, transfer_learning=transfer_learning)
         
         self.path = "graphs_charts/"
@@ -96,6 +96,7 @@ class deep_q_learning_algorithm(DeepQLearning, plot_graphs):
         self.plot_episode_time_step(self.episode_rewards,type_graph="cumulative_reward")
         self.plot_episode_time_step(self.step_per_episode, type_graph = "step_number")
         self.plot_model()
+
 
     def dueling_deep_q_learning(self):
 
