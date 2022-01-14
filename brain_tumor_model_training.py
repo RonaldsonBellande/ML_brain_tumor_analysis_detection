@@ -1,25 +1,10 @@
 from header_imports import *
-from brain_tumor_model_building import *
 
 
-class brain_tumor_training(object):
+class brain_tumor_training(brain_cancer_building):
     def __init__(self, number_classes, model_type, image_type):
-        
-        self.number_classes = int(number_classes)
-        self.model_type = str(model_type)
-        self.image_type = str(image_type)
+        super().__init__(number_classes, image_type, image_type)
 
-        brain_cancer_building_obj = brain_cancer_building(number_classes = self.number_classes, model_type = self.model_type, image_type =  self.image_type)
-        self.model = brain_cancer_building_obj.get_model()
-                
-        xy_data = brain_cancer_building_obj.get_data()
-
-        self.X_train = xy_data[0]
-        self.Y_train = xy_data[1]
-        self.X_test = xy_data[2]
-        self.Y_test = xy_data[3]
-        self.Y_test_vec = xy_data[4]
-        
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
         self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
