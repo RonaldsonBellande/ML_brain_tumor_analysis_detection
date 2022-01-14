@@ -12,13 +12,38 @@ class brain_cancer_building(object):
 
         self.image_file = []
         self.label_name = []
-        self.number_classes = number_classes
+        self.number_classes = int(number_classes)
         self.image_size = 240
         self.number_of_nodes = 32
-        self.path = "Data/"
         self.true_path  = "brain_cancer_category_2/"
         self.image_type = image_type
 
+        self.valid_images = [".jpg",".png"]
+        self.categories = ["False","True"]
+        self.input_shape = None
+        self.advanced_categories = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
+        self.model = None
+        self.model_summary = "model_summary/"
+        self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
+        self.model_type = model_type
+        
+        self.setup_structure() 
+        self.splitting_data_normalize()
+        
+        print(self.image_type)
+        print(self.model_type)
+        if self.model_type == "model1":
+            self.create_models_1()
+        elif self.model_type == "model2":
+            self.create_models_2()
+        elif self.model_type == "model3":
+            self.create_model_3()
+
+        self.save_model_summary()
+
+    
+    def setup_structure(self):
+        
         if self.image_type == "normal":
             self.true_path = self.true_path + "brain_cancer_seperate_category_2/"
         elif self.image_type == "edge_1":
@@ -26,20 +51,6 @@ class brain_cancer_building(object):
         elif self.image_type == "edge_2":
             self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_2/"
 
-
-        self.valid_images = [".jpg",".png"]
-        self.categories = ["False","True"]
-        self.input_shape = None
-        self.advanced_categories = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
-        self.X_train = None
-        self.X_test = None
-        self.Y_train_vec = None
-        self.Y_test_vec = None
-        self.model = None
-        self.model_summary = "model_summary/"
-        self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
-        self.create_model_type = model_type
-        
         if self.number_classes == 2:
             self.check_valid(self.categories[0])
             self.check_valid(self.categories[1])
@@ -74,18 +85,11 @@ class brain_cancer_building(object):
         self.label_name = np.array(self.label_name)
         self.label_name = self.label_name.reshape((len(self.image_file),1))
 
-        self.splitting_data_normalize()
-
-        if self.create_model_type == "model1":
-            self.create_models_1()
-        elif self.create_model_type == "model2":
-            self.create_models_2()
-        elif self.create_model_type == "model3":
-            self.create_model_3()
-
-        self.save_model_summary()
 
 
+
+
+        
     def check_valid(self, input_file):
         for img in os.listdir(self.true_path + input_file):
             ext = os.path.splitext(img)[1]
@@ -115,29 +119,18 @@ class brain_cancer_building(object):
 
 
     def splitting_data_normalize(self):
-        self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size = 0.15, random_state = 42)
+        self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size = 0.10, random_state = 42)
         self.input_shape = self.X_train.shape[1:]
+        print
         self.Y_train = tf.keras.utils.to_categorical(self.Y_train_vec, self.number_classes)
         self.Y_test = tf.keras.utils.to_categorical(self.Y_test_vec, self.number_classes)
         self.X_train = self.X_train.astype("float32") /255
         self.X_test = self.X_test.astype("float32") / 255
 
 
-    def get_model(self):
-        return self.model
-
-    def get_data(self):
-        return self.X_train , self.Y_train, self.X_test, self.Y_test, self.Y_test_vec
-
-    def get_categories(self):
-        if self.number_classes == 2:
-            return self.categories
-        elif self.number_classes == 4:
-            return self.advanced_categories
-
-
     def create_models_1(self):
-
+        
+        print("here")
         self.model = Sequential()
         self.model.add(Conv2D(filters=64, kernel_size=(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
         self.model.add(MaxPooling2D(pool_size = (4,4)))
@@ -185,7 +178,6 @@ class brain_cancer_building(object):
         self.model.add(Flatten())
  
 
-    # Save the model summery as a txt file
     def save_model_summary(self):
 
         with open(self.model_summary + self.create_model_type +"_summary_architecture_" + str(self.number_classes) +".txt", "w+") as model:

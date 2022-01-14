@@ -3,17 +3,14 @@ from header_imports import *
 
 class brain_tumor_training(brain_cancer_building):
     def __init__(self, number_classes, model_type, image_type):
-        super().__init__(number_classes, image_type, image_type)
+        super().__init__(number_classes, model_type, image_type)
 
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
         self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
         self.callbacks = keras.callbacks.EarlyStopping(monitor='val_acc', patience=4, verbose=1)
-        
-        # Model
         self.model_categories = brain_cancer_building_obj.get_categories()
         
-        # Train
         self.train_model()
         self.evaluate_model()
         self.plot_model()
@@ -21,12 +18,10 @@ class brain_tumor_training(brain_cancer_building):
 
 
 
-    #  Training model 
     def train_model(self):
        
         grid = GridSearchCV(estimator = self.model, param_grid = self.param_grid, n_jobs = 1, cv = 3, verbose = 10)
         
-        # Determine where the training time starts
         start = "starting --: "
         self.get_training_time(start)
 
@@ -37,14 +32,12 @@ class brain_tumor_training(brain_cancer_building):
                 callbacks=[self.callbacks],
                 shuffle=True)
 
-        # Determine when the training time ends
         start = "ending --: " 
         self.get_training_time(start)
         
         self.model.save_weights("models/" + self.image_type + "_" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
 
-    # Evaluate model
     def evaluate_model(self):
         evaluation = self.model.evaluate(self.X_test, self.Y_test, verbose=1)
 
@@ -57,10 +50,8 @@ class brain_tumor_training(brain_cancer_building):
 
 
 
-    # PLotting model
     def plot_model(self):
 
-        # Brain cancer modeling
         plt.plot(self.brain_cancer_model.history['accuracy'])
         plt.plot(self.brain_cancer_model.history['val_accuracy'])
         plt.title('model accuracy')
@@ -68,7 +59,6 @@ class brain_tumor_training(brain_cancer_building):
         plt.xlabel('epoch')
         plt.legend(['train', 'Validation'], loc='upper left')
         plt.savefig("graph_charts/" + self.model_type + '_accuracy_' + str(self.number_classes) + '.png', dpi =500)
-
 
         plt.plot(self.brain_cancer_model.history['loss'])
         plt.plot(self.brain_cancer_model.history['val_loss'])
@@ -95,7 +85,6 @@ class brain_tumor_training(brain_cancer_building):
 
 
 
-    # Record time for the training
     def get_training_time(self, start):
 
         date_and_time = datetime.datetime.now()

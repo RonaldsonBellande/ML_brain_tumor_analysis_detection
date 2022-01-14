@@ -10,7 +10,6 @@ class utilities(object):
         self.name_of_new_directory = name_of_new_directory
 
 
-
     # To create more nested folders you need to seperate he awway with - and that teels that it is a seperate folder
     def seperate_image_base_on_image(self, nested_folders = "None", directory_name = "True - False"):
         
