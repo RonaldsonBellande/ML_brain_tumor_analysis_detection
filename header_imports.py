@@ -72,6 +72,7 @@ info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
 if info.free < 964157696:
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 from tensorflow.python.client import device_lib
 device_name = [x.name for x in device_lib.list_local_devices() if x.device_type == 'GPU']
 

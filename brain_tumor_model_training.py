@@ -7,9 +7,13 @@ class brain_tumor_training(brain_cancer_building):
 
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
+        self.number_images_to_plot = 16
+        self.graph_path = "graph_charts/"
+        self.model_path = "models/" 
         self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
-        self.callbacks = keras.callbacks.EarlyStopping(monitor='val_acc', patience=4, verbose=1)
-        self.model_categories = brain_cancer_building_obj.get_categories()
+        self.callback_1 = TensorBoard(log_dir="logs/{}-{}".format(self.model_type, int(time.time())))
+        self.callback_2 = ModelCheckpoint(filepath=self.model_path, save_weights_only=True, verbose=1)
+        self.callback_3 = ReduceLROnPlateau(monitor='val_accuracy', patience=2, verbose=1, factor= 0.5, min_lr=0.00001)
         
         self.train_model()
         self.evaluate_model()
@@ -22,18 +26,16 @@ class brain_tumor_training(brain_cancer_building):
        
         grid = GridSearchCV(estimator = self.model, param_grid = self.param_grid, n_jobs = 1, cv = 3, verbose = 10)
         
-        start = "starting --: "
-        self.get_training_time(start)
+        self.get_training_time("starting --: ")
 
         self.brain_cancer_model = self.model.fit(self.X_train, self.Y_train,
                 batch_size=self.batch_size[2],
                 validation_split=0.15,
-                epochs=self.epochs[3],
-                callbacks=[self.callbacks],
+                epochs=self.epochs[4],
+                callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
-
-        start = "ending --: " 
-        self.get_training_time(start)
+       
+        self.get_training_time("ending --: ")
         
         self.model.save_weights("models/" + self.image_type + "_" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
@@ -59,27 +61,28 @@ class brain_tumor_training(brain_cancer_building):
         plt.xlabel('epoch')
         plt.legend(['train', 'Validation'], loc='upper left')
         plt.savefig("graph_charts/" + self.model_type + '_accuracy_' + str(self.number_classes) + '.png', dpi =500)
-
+        plt.clf()
+        
         plt.plot(self.brain_cancer_model.history['loss'])
         plt.plot(self.brain_cancer_model.history['val_loss'])
         plt.title('model loss')
         plt.ylabel('loss')
         plt.xlabel('epoch')
         plt.legend(['train', 'Validation'], loc='upper left')
-        plt.savefig("graph_charts/" + self.image_type + "_" + self.model_type + '_lost_' + str(self.number_classes) +'.png', dpi =500)
-
+        plt.savefig("graph_charts/" + self.model_type + '_lost_' + str(self.number_classes) +'.png', dpi =500)
+        plt.clf()
 
 
     def plot_random_examples(self):
 
         plt.figure( dpi=256)
-        predicted_classes = self.model.predict_classes(self.X_test)
+        predicted_classes = self.model.predict(self.X_test)
 
-        for i in range(25):
-            plt.subplot(5,5,i+1)
+        for i in range(self.number_images_to_plot):
+            plt.subplot(4,4,i+1)
             fig=plt.imshow(self.X_test[i,:,:,:])
             plt.axis('off')
-            plt.title("Predicted - {}".format(self.model_categories[predicted_classes[i]] ) + "\n Actual - {}".format(self.model_categories[self.Y_test_vec[i,0]] ),fontsize=3)
+            plt.title("Predicted - {}".format(self.category_names[np.argmax(predicted_classes[i], axis=0)]) + "\n Actual - {}".format(self.category_names[np.argmax(self.Y_test_vec[i,0])]),fontsize=1)
             plt.tight_layout()
             plt.savefig("graph_charts/" + self.image_type + "_" + self.model_type + '_prediction' + str(self.number_classes) + '.png', dpi =500)
 

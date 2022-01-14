@@ -30,8 +30,6 @@ class brain_cancer_building(object):
         self.setup_structure() 
         self.splitting_data_normalize()
         
-        print(self.image_type)
-        print(self.model_type)
         if self.model_type == "model1":
             self.create_models_1()
         elif self.model_type == "model2":
@@ -52,6 +50,9 @@ class brain_cancer_building(object):
             self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_2/"
 
         if self.number_classes == 2:
+
+            self.category_names = self.categories 
+            
             self.check_valid(self.categories[0])
             self.check_valid(self.categories[1])
             
@@ -59,6 +60,9 @@ class brain_cancer_building(object):
             self.resize_image_and_label_image(self.categories[1])
 
         elif self.number_classes == 4:
+            
+            self.category_names = self.advanced_categories 
+
             self.true_path = "brain_cancer_category_4/"
             if self.image_type == "normal":
             	self.true_path = self.true_path + "brain_cancer_seperate_category_4/"
@@ -66,7 +70,7 @@ class brain_cancer_building(object):
                 self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_1/"
             elif self.image_type == "edge_2":
                 self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_2/"
-            
+             
             self.check_valid(self.advanced_categories[0])
             self.check_valid(self.advanced_categories[1])
             self.check_valid(self.advanced_categories[2])
@@ -86,10 +90,6 @@ class brain_cancer_building(object):
         self.label_name = self.label_name.reshape((len(self.image_file),1))
 
 
-
-
-
-        
     def check_valid(self, input_file):
         for img in os.listdir(self.true_path + input_file):
             ext = os.path.splitext(img)[1]
@@ -121,7 +121,6 @@ class brain_cancer_building(object):
     def splitting_data_normalize(self):
         self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size = 0.10, random_state = 42)
         self.input_shape = self.X_train.shape[1:]
-        print
         self.Y_train = tf.keras.utils.to_categorical(self.Y_train_vec, self.number_classes)
         self.Y_test = tf.keras.utils.to_categorical(self.Y_test_vec, self.number_classes)
         self.X_train = self.X_train.astype("float32") /255
@@ -129,16 +128,13 @@ class brain_cancer_building(object):
 
 
     def create_models_1(self):
-        
-        print("here")
+
         self.model = Sequential()
-        self.model.add(Conv2D(filters=64, kernel_size=(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
-        self.model.add(MaxPooling2D(pool_size = (4,4)))
+        self.model.add(Conv2D(filters=64,kernel_size=(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
         self.model.add(Dropout(0.25))
-        self.model.add(Conv2D(filters=32, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
-        self.model.add(MaxPooling2D(pool_size = (2,2)))
+        self.model.add(Conv2D(filters=32,kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
         self.model.add(Dropout(0.25))
-        self.model.add(Conv2D(filters=16, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
+        self.model.add(Conv2D(filters=16,kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
         self.model.add(MaxPooling2D(pool_size = (1,1)))
         self.model.add(Dropout(0.25))
         self.model.add(Flatten())
@@ -151,16 +147,15 @@ class brain_cancer_building(object):
     def create_models_2(self):
 
         self.model = Sequential()
-        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu", input_shape = self.input_shape))
-        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu"))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Conv2D(filters=64, kernel_size=(3,3), strides=(1,1), padding="same", activation="relu", input_shape = self.input_shape))
+        self.model.add(Conv2D(filters=32, kernel_size=(3,3), strides=(1,1), padding="same",activation="relu"))
         self.model.add(Dropout(rate=0.25))
-        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
-        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Conv2D(filters=16, kernel_size=(3,3), strides=(1,1), padding="same",activation="relu"))
+        self.model.add(MaxPooling2D(pool_size = (1,1)))
+        self.model.add(Conv2D(filters=8, kernel_size=(3,3), strides=(1,1), padding="same",activation="relu"))
         self.model.add(Dropout(rate=0.25))
         self.model.add(Flatten())
-        self.model.add(Dense(units=self.number_of_nodes, activation="relu"))
+        self.model.add(Dense(self.number_of_nodes, activation="relu"))
         self.model.add(Dropout(rate=0.5))
         self.model.add(Dense(units = self.number_classes, activation="softmax"))
         self.model.compile(loss = 'binary_crossentropy', optimizer ='adam', metrics= ['accuracy'])
@@ -176,11 +171,29 @@ class brain_cancer_building(object):
         self.MyConv()
         self.MyConv()
         self.model.add(Flatten())
- 
+        self.model.add(Dense(units = self.number_classes, activation = "softmax", input_dim=2))
+        self.model.compile(loss = "binary_crossentropy", optimizer ="adam", metrics= ["accuracy"])
+        
+        return self.model
+        
 
+    def MyConv(self, first = False):
+        if first == False:
+            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding="same",
+                input_shape = self.input_shape))
+        else:
+            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding="same",
+                 input_shape = self.input_shape))
+    
+        self.model.add(Activation("relu"))
+        self.model.add(Dropout(0.5))
+        self.model.add(Conv2D(32, (4, 4),strides = (1,1),padding="same"))
+        self.model.add(Activation("relu"))
+        self.model.add(Dropout(0.25))
+    
+    
     def save_model_summary(self):
-
-        with open(self.model_summary + self.create_model_type +"_summary_architecture_" + str(self.number_classes) +".txt", "w+") as model:
+        with open(self.model_summary + self.model_type +"_summary_architecture_" + str(self.number_classes) +".txt", "w+") as model:
             with redirect_stdout(model):
                 self.model.summary()
 
