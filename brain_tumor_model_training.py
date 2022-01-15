@@ -31,13 +31,13 @@ class brain_tumor_training(brain_cancer_building):
         self.brain_cancer_model = self.model.fit(self.X_train, self.Y_train,
                 batch_size=self.batch_size[2],
                 validation_split=0.15,
-                epochs=self.epochs[4],
+                epochs=self.epochs[1],
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
        
         self.get_training_time("ending --: ")
         
-        self.model.save_weights("models/" + self.image_type + "_" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
+        self.model.save("models/" + self.image_type + "_" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
 
     def evaluate_model(self):

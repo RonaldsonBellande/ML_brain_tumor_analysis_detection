@@ -14,7 +14,7 @@ class brain_cancer_building(object):
         self.label_name = []
         self.number_classes = int(number_classes)
         self.image_size = 240
-        self.number_of_nodes = 32
+        self.number_of_nodes = 16
         self.true_path  = "brain_cancer_category_2/"
         self.image_type = image_type
 

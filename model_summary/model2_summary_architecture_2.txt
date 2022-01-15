@@ -19,14 +19,14 @@ _________________________________________________________________
                                                                  
  flatten (Flatten)           (None, 460800)            0         
                                                                  
- dense (Dense)               (None, 512)               235930112 
+ dense (Dense)               (None, 16)                7372816   
                                                                  
- dropout_2 (Dropout)         (None, 512)               0         
+ dropout_2 (Dropout)         (None, 16)                0         
                                                                  
- dense_1 (Dense)             (None, 2)                 1026      
+ dense_1 (Dense)             (None, 2)                 34        
                                                                  
 =================================================================
-Total params: 235,957,178
-Trainable params: 235,957,178
+Total params: 7,398,890
+Trainable params: 7,398,890
 Non-trainable params: 0
 _________________________________________________________________
