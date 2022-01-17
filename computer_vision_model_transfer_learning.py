@@ -6,96 +6,89 @@ class computer_vision_transfer_learning(object):
         
         self.image_file = []
         self.label_name = []
-        self.image_size = 224
-        self.path  = "traffic_sign:s/"
+        self.number_classes = int(number_classes)
+        self.image_size = 240
+        self.number_of_nodes = 16
+        self.true_path  = "brain_cancer_category_2/"
         self.image_type = image_type
-        self.category = category
-        self.valid_images = [".jpg",".png"]
-        self.model_summary = "model_summary/"
-        self.optimizer = tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
 
-        self.path_to_model = "models/"
-        self.save_model_path = self.path_to_model + "/transfer_learning_model/"
-        self.currently_build_model = self.path_to_model + currently_build_model
-        self.model.load_weights(self.currently_build_model)
-        self.transfer_learning_model()
-        self.setup_structure()
-        self.save_model_summary()
+        self.valid_images = [".jpg",".png"]
+        self.categories = ["False","True"]
+        self.advanced_categories = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
+        self.model = None
+        self.model_summary = "model_summary/"
+        self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
+        self.model_type = model_type
+        
+        self.setup_structure() 
+        self.splitting_data_normalize()
+        
+        if self.model_type == "model1":
+            self.create_models_1()
+        elif self.model_type == "model2":
+            self.create_models_2()
+        elif self.model_type == "model3":
+            self.create_model_3()
+
+        self.batch_size = [10, 20, 40, 60, 80, 100]
+        self.epochs = [1, 5, 10, 50, 100, 200]
+        self.number_images_to_plot = 16
+        self.graph_path = "graph_charts/"
+        self.model_path = "models/" 
+        self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
+        self.callback_1 = TensorBoard(log_dir="logs/{}-{}".format(self.model_type, int(time.time())))
+        self.callback_2 = ModelCheckpoint(filepath=self.model_path, save_weights_only=True, verbose=1)
+        self.callback_3 = ReduceLROnPlateau(monitor='val_accuracy', patience=2, verbose=1, factor= 0.5, min_lr=0.00001)
+        
+        self.train_model()
+        self.evaluate_model()
+        self.plot_model()
+        self.plot_random_examples()
 
 
     def setup_structure(self):
+        
+        if self.image_type == "normal":
+            self.true_path = self.true_path + "brain_cancer_seperate_category_2/"
+        elif self.image_type == "edge_1":
+            self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_1/"
+        elif self.image_type == "edge_2":
+            self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_2/"
 
-        if self.image_type == "small_traffic_sign":
-            self.true_path = self.path + "Small_Traffic_Sign/"
-        elif self.image_type == "regular":
-            self.true_path = self.path + "Train/"
-        elif self.image_type == "train1":
-            self.true_path = self.path + "Train_1_50/"
-        elif self.image_type == "train2":
-            self.true_path = self.path + "Train_2_25/"
-        elif self.image_type == "train3":
-            self.true_path = self.path + "Train_3_25/"
+        if self.number_classes == 2:
 
-        self.advanced_categories = ["0", "1", "2", "2", "3", "4", "5", "6", "7", "8", "9", "10","11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30","31", "32", "33", "34", "35", "36", "37", "38","39", "40", "41", "42"]
-        self.categories = ["One Way Right", "Slow Xing", "Yield", "One Way Left", "Traffic Light Sign", "Stop", "Ducky"]
-        self.category_names = traffic_sign_categories.category_names
-
-        if self.category == "normal":
-            self.model_categories = self.categories
-            self.number_classes = 7
-        elif self.category == "regular":
-            self.model_categories = self.category_names
-            self.number_classes = 43
-
-        if self.category == "regular":
-            for i in range(0, 43):
-                self.check_valid(self.advanced_categories[i])
-        elif self.category == "normal":
-            for i in range(0, 7):
-                self.check_valid(self.categories[i])
-
-        if self.category == "regular":
-            for i in range(0,43):
-                self.resize_image_and_label_image(self.advanced_categories[i])
-        elif self.category == "normal":
-            for i in range(0,7):
-                self.resize_image_and_label_image(self.categories[i])
-
-
-    def resize_image_and_label_image(self, input_file):
-
-        for image in os.listdir(self.true_path + input_file):    
-            image_resized = cv2.imread(os.path.join(self.true_path + input_file,image))
-            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
-            self.image_file.append(image_resized)
-
-            if self.category == "regular":
-                for i in range(0, 43):
-                    print(i)
-                    if input_file == str(i):
-                        self.label_name.append(i)
+            self.category_names = self.categories 
             
-            elif self.category == "normal":
-                if input_file == "One Way Right":
-                    self.label_name.append(0)
-                elif input_file == "Slow Xing":
-                    self.label_name.append(1)
-                elif input_file == "Yield":
-                    self.label_name.append(2)
-                elif input_file == "One Way Left":
-                    self.label_name.append(3)
-                elif input_file == "Traffic Light Sign":
-                    self.label_name.append(4)
-                elif input_file == "Stop":
-                    self.label_name.append(5)
-                elif input_file == "Ducky":
-                    self.label_name.append(6)
-                else:
-                    print("error")
+            self.check_valid(self.categories[0])
+            self.check_valid(self.categories[1])
+            
+            self.resize_image_and_label_image(self.categories[0])
+            self.resize_image_and_label_image(self.categories[1])
 
-        self.image_file = np.array(self.image_file)
-        self.label_name = np.array(self.label_name)
-        self.label_name = self.label_name.reshape((len(self.image_file),1))
+        elif self.number_classes == 4:
+            
+            self.category_names = self.advanced_categories 
+
+            self.true_path = "brain_cancer_category_4/"
+            if self.image_type == "normal":
+            	self.true_path = self.true_path + "brain_cancer_seperate_category_4/"
+            elif self.image_type == "edge_1":
+                self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_1/"
+            elif self.image_type == "edge_2":
+                self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_2/"
+             
+            self.check_valid(self.advanced_categories[0])
+            self.check_valid(self.advanced_categories[1])
+            self.check_valid(self.advanced_categories[2])
+            self.check_valid(self.advanced_categories[3])
+            
+            self.resize_image_and_label_image(self.advanced_categories[0])
+            self.resize_image_and_label_image(self.advanced_categories[1])
+            self.resize_image_and_label_image(self.advanced_categories[2])
+            self.resize_image_and_label_image(self.advanced_categories[3])
+
+        else:
+            print("Detection Variety out of bounds")
 
 
     def check_valid(self, input_file):
@@ -103,6 +96,36 @@ class computer_vision_transfer_learning(object):
             ext = os.path.splitext(img)[1]
             if ext.lower() not in self.valid_images:
                 continue
+    
+
+    def resize_image_and_label_image(self, input_file):
+        for image in os.listdir(self.true_path + input_file):
+            
+            image_resized = cv2.imread(os.path.join(self.true_path + input_file,image))
+            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
+            self.image_file.append(image_resized)
+
+            if input_file == "False":
+                self.label_name.append(0)
+            elif input_file == "True":
+                self.label_name.append(1)
+            elif input_file == "glioma_tumor":
+                self.label_name.append(1)
+            elif input_file == "meningioma_tumor":
+                self.label_name.append(2)
+            elif input_file == "pituitary_tumor":
+                self.label_name.append(3)
+            else:
+                print("error")
+
+
+    def splitting_data_normalize(self):
+        self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size = 0.10, random_state = 42)
+        self.input_shape = self.X_train.shape[1:]
+        self.Y_train = tf.keras.utils.to_categorical(self.Y_train_vec, self.number_classes)
+        self.Y_test = tf.keras.utils.to_categorical(self.Y_test_vec, self.number_classes)
+        self.X_train = self.X_train.astype("float32") /255
+        self.X_test = self.X_test.astype("float32") / 255
 
 
     def create_models_1(self):

@@ -16,10 +16,14 @@ class classification_with_model(object):
         self.graph_path = "graph_charts/" + "prediction_with_model_saved/"
 
         if self.number_classes == 2:
+            self.number_images_to_plot = 9
             self.model_categpory = ["False","True"]
-        
+            self.image_path = "brain_cancer_category_2/" + "Testing" 
+       
         elif self.number_classes == 4:
+            self.number_images_to_plot = 16
             self.model_categpory = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
+            self.image_path = "brain_cancer_category_4/" + "Testing" 
 
         self.prepare_image_data()
         self.plot_prediction_with_model()
@@ -37,20 +41,13 @@ class classification_with_model(object):
         self.X_test = self.image_file.astype("float32") / 255
 
 
-    def check_valid(self, input_file):
-
-        for img in os.listdir(self.true_path + input_file):
-            ext = os.path.splitext(img)[1]
-            if ext.lower() not in self.valid_images:
-                continue
-
     def plot_prediction_with_model(self):
 
         plt.figure(dpi=500)
         predicted_classes = self.model.predict(self.X_test)
 
         for i in range(self.number_images_to_plot):
-            plt.subplot(3,3,i+1)
+            plt.subplot(math.sqrt(self.number_images_to_plot),math.sqrt(self.number_images_to_plot),i+1)
             fig=plt.imshow(self.X_test[i,:,:,:])
             plt.axis('off')
             plt.title("Predicted - {}".format(self.model_categpory[np.argmax(predicted_classes[i], axis=0)]), fontsize=1)

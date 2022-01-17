@@ -20,7 +20,6 @@ class brain_cancer_building(object):
 
         self.valid_images = [".jpg",".png"]
         self.categories = ["False","True"]
-        self.input_shape = None
         self.advanced_categories = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
         self.model = None
         self.model_summary = "model_summary/"
