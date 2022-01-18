@@ -2,11 +2,12 @@ from header_imports import *
 
 
 class computer_vision_transfer_learning(object):
-    def __init__(self, save_model, model_type, number_classes, image_type):
+    def __init__(self, save_model, model_type, number_classes, image_type, random_noise_count):
         
         self.image_file = []
         self.label_name = []
         self.number_classes = int(number_classes)
+        self.random_noise_count = int(random_noise_count)
         self.image_size = 240
         self.save_model = save_model
         self.number_of_nodes = 16
@@ -109,6 +110,23 @@ class computer_vision_transfer_learning(object):
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
             self.label_name.append(input_file)
+            self.adding_random_noise(image_resized, input_file)
+
+
+    def adding_random_noise(self, image, input_file):
+        
+        mean = 0
+        var = 10
+        sigma = (var ** 0.5)
+        
+        for i in range(self.random_noise_count):
+            gaussian = np.random.normal(mean, sigma, (image.shape[0], image.shape[1]))
+            image[:, :, 0] = image[:, :, 0] + gaussian
+            image[:, :, 1] = image[:, :, 1] + gaussian
+            image[:, :, 2] = image[:, :, 2] + gaussian
+            
+            self.image_file.append(image)
+            self.label_name.append(input_file)
 
 
     def splitting_data_normalize(self):
@@ -208,7 +226,7 @@ class computer_vision_transfer_learning(object):
         self.computer_vision_model = self.model.fit(self.X_train, self.Y_train,
                 batch_size=self.batch_size[2],
                 validation_split=0.15,
-                epochs=self.epochs[1],
+                epochs=self.epochs[3],
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
 

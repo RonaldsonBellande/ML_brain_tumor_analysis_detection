@@ -38,7 +38,6 @@ class edge_detection_analysis(object):
 	
         for i in range(len(subdir)):
             cv2.imwrite(os.path.join(image_output, str(file_name)), img)
-
     
     def image_looping(self):
 
