@@ -26,6 +26,7 @@ class brain_cancer_building(object):
         self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
         self.model_type = model_type
         
+        self.labelencoder = LabelEncoder()
         self.setup_structure() 
         self.splitting_data_normalize()
         
@@ -82,13 +83,13 @@ class brain_cancer_building(object):
 
         else:
             print("Detection Variety out of bounds")
-
-
+        
+        self.label_name = self.labelencoder.fit_transform(self.label_name)
         self.image_file = np.array(self.image_file)
         self.label_name = np.array(self.label_name)
         self.label_name = self.label_name.reshape((len(self.image_file),1))
 
-
+    
     def check_valid(self, input_file):
         for img in os.listdir(self.true_path + input_file):
             ext = os.path.splitext(img)[1]
@@ -102,19 +103,7 @@ class brain_cancer_building(object):
             image_resized = cv2.imread(os.path.join(self.true_path + input_file,image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
-
-            if input_file == "False":
-                self.label_name.append(0)
-            elif input_file == "True":
-                self.label_name.append(1)
-            elif input_file == "glioma_tumor":
-                self.label_name.append(1)
-            elif input_file == "meningioma_tumor":
-                self.label_name.append(2)
-            elif input_file == "pituitary_tumor":
-                self.label_name.append(3)
-            else:
-                print("error")
+            self.label_name.append(input_file)
 
 
     def splitting_data_normalize(self):
@@ -126,14 +115,17 @@ class brain_cancer_building(object):
         self.X_test = self.X_test.astype("float32") / 255
 
 
+   
     def create_models_1(self):
 
         self.model = Sequential()
-        self.model.add(Conv2D(filters=64,kernel_size=(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
+        self.model.add(Conv2D(filters=64, kernel_size=(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
+        self.model.add(MaxPooling2D(pool_size = (4,4)))
         self.model.add(Dropout(0.25))
-        self.model.add(Conv2D(filters=32,kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
+        self.model.add(Conv2D(filters=32, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
+        self.model.add(MaxPooling2D(pool_size = (2,2)))
         self.model.add(Dropout(0.25))
-        self.model.add(Conv2D(filters=16,kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
+        self.model.add(Conv2D(filters=16, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
         self.model.add(MaxPooling2D(pool_size = (1,1)))
         self.model.add(Dropout(0.25))
         self.model.add(Flatten())
@@ -146,15 +138,16 @@ class brain_cancer_building(object):
     def create_models_2(self):
 
         self.model = Sequential()
-        self.model.add(Conv2D(filters=64, kernel_size=(3,3), strides=(1,1), padding="same", activation="relu", input_shape = self.input_shape))
-        self.model.add(Conv2D(filters=32, kernel_size=(3,3), strides=(1,1), padding="same",activation="relu"))
+        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu", input_shape = self.input_shape))
+        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu"))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
         self.model.add(Dropout(rate=0.25))
-        self.model.add(Conv2D(filters=16, kernel_size=(3,3), strides=(1,1), padding="same",activation="relu"))
-        self.model.add(MaxPooling2D(pool_size = (1,1)))
-        self.model.add(Conv2D(filters=8, kernel_size=(3,3), strides=(1,1), padding="same",activation="relu"))
+        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
+        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
         self.model.add(Dropout(rate=0.25))
         self.model.add(Flatten())
-        self.model.add(Dense(self.number_of_nodes, activation="relu"))
+        self.model.add(Dense(units=self.number_of_nodes, activation="relu"))
         self.model.add(Dropout(rate=0.5))
         self.model.add(Dense(units = self.number_classes, activation="softmax"))
         self.model.compile(loss = 'binary_crossentropy', optimizer ='adam', metrics= ['accuracy'])
@@ -185,10 +178,12 @@ class brain_cancer_building(object):
                  input_shape = self.input_shape))
     
         self.model.add(Activation("relu"))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
         self.model.add(Dropout(0.5))
         self.model.add(Conv2D(32, (4, 4),strides = (1,1),padding="same"))
         self.model.add(Activation("relu"))
         self.model.add(Dropout(0.25))
+
     
     
     def save_model_summary(self):

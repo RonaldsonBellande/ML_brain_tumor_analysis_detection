@@ -2,12 +2,13 @@ from header_imports import *
 
 
 class computer_vision_transfer_learning(object):
-    def __init__(self, currently_build_model, image_type, category):
+    def __init__(self, save_model, model_type, number_classes, image_type):
         
         self.image_file = []
         self.label_name = []
         self.number_classes = int(number_classes)
         self.image_size = 240
+        self.save_model = save_model
         self.number_of_nodes = 16
         self.true_path  = "brain_cancer_category_2/"
         self.image_type = image_type
@@ -15,11 +16,11 @@ class computer_vision_transfer_learning(object):
         self.valid_images = [".jpg",".png"]
         self.categories = ["False","True"]
         self.advanced_categories = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
-        self.model = None
         self.model_summary = "model_summary/"
         self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
         self.model_type = model_type
         
+        self.labelencoder = LabelEncoder()
         self.setup_structure() 
         self.splitting_data_normalize()
         
@@ -30,12 +31,13 @@ class computer_vision_transfer_learning(object):
         elif self.model_type == "model3":
             self.create_model_3()
 
+        self.model.load_weights("models/" + self.save_model)
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
         self.number_images_to_plot = 16
         self.graph_path = "graph_charts/"
         self.model_path = "models/" 
-        self.param_grid = dict(batch_size = self.batch_size, epochs = self.epochs)
+        self.param_grid = dict(batch_size=self.batch_size, epochs=self.epochs)
         self.callback_1 = TensorBoard(log_dir="logs/{}-{}".format(self.model_type, int(time.time())))
         self.callback_2 = ModelCheckpoint(filepath=self.model_path, save_weights_only=True, verbose=1)
         self.callback_3 = ReduceLROnPlateau(monitor='val_accuracy', patience=2, verbose=1, factor= 0.5, min_lr=0.00001)
@@ -58,17 +60,14 @@ class computer_vision_transfer_learning(object):
         if self.number_classes == 2:
 
             self.category_names = self.categories 
-            
             self.check_valid(self.categories[0])
             self.check_valid(self.categories[1])
-            
             self.resize_image_and_label_image(self.categories[0])
             self.resize_image_and_label_image(self.categories[1])
 
         elif self.number_classes == 4:
             
             self.category_names = self.advanced_categories 
-
             self.true_path = "brain_cancer_category_4/"
             if self.image_type == "normal":
             	self.true_path = self.true_path + "brain_cancer_seperate_category_4/"
@@ -81,7 +80,6 @@ class computer_vision_transfer_learning(object):
             self.check_valid(self.advanced_categories[1])
             self.check_valid(self.advanced_categories[2])
             self.check_valid(self.advanced_categories[3])
-            
             self.resize_image_and_label_image(self.advanced_categories[0])
             self.resize_image_and_label_image(self.advanced_categories[1])
             self.resize_image_and_label_image(self.advanced_categories[2])
@@ -89,6 +87,12 @@ class computer_vision_transfer_learning(object):
 
         else:
             print("Detection Variety out of bounds")
+
+
+        self.label_name = self.labelencoder.fit_transform(self.label_name)
+        self.image_file = np.array(self.image_file)
+        self.label_name = np.array(self.label_name)
+        self.label_name = self.label_name.reshape((len(self.image_file),1))
 
 
     def check_valid(self, input_file):
@@ -104,19 +108,7 @@ class computer_vision_transfer_learning(object):
             image_resized = cv2.imread(os.path.join(self.true_path + input_file,image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
-
-            if input_file == "False":
-                self.label_name.append(0)
-            elif input_file == "True":
-                self.label_name.append(1)
-            elif input_file == "glioma_tumor":
-                self.label_name.append(1)
-            elif input_file == "meningioma_tumor":
-                self.label_name.append(2)
-            elif input_file == "pituitary_tumor":
-                self.label_name.append(3)
-            else:
-                print("error")
+            self.label_name.append(input_file)
 
 
     def splitting_data_normalize(self):
@@ -209,7 +201,62 @@ class computer_vision_transfer_learning(object):
         return self.model
 
 
-    def save_model_summary(self):
-        with open(self.model_summary + self.create_model_type +"_summary_architecture_transfer_learning_" + str(self.number_classes) +".txt", "w+") as model:
-            with redirect_stdout(model):
-                self.model.summary()
+    def train_model(self):
+       
+        grid = GridSearchCV(estimator = self.model, param_grid = self.param_grid, n_jobs = 1, cv = 3, verbose = 10)
+
+        self.computer_vision_model = self.model.fit(self.X_train, self.Y_train_vec,
+                batch_size=self.batch_size[4],
+                validation_split=0.10,
+                epochs=self.epochs[3],
+                callbacks=[self.callback_1, self.callback_2, self.callback_3],
+                shuffle=True)
+
+        self.model.save(self.model_path + self.model_type + "_computer_vision_categories_"+ str(self.number_classes)+"_model.h5")
+   
+
+    def evaluate_model(self):
+        evaluation = self.model.evaluate(self.X_test, self.Y_test_vec, verbose=1)
+
+        with open(self.graph_path + self.model_type + "_evaluate_computer_vision_category_" + str(self.number_classes) + ".txt", 'w') as write:
+            write.writelines("Loss: " + str(evaluation[0]) + "\n")
+            write.writelines("Accuracy: " + str(evaluation[1]))
+        
+        print("Loss:", evaluation[0])
+        print("Accuracy: ", evaluation[1])
+
+
+    def plot_model(self):
+
+        plt.plot(self.computer_vision_model.history['accuracy'])
+        plt.plot(self.computer_vision_model.history['val_accuracy'])
+        plt.title('model accuracy')
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'Validation'], loc='upper left')
+        plt.savefig(self.graph_path + self.model_type + '_accuracy_' + str(self.number_classes) + '.png', dpi =500)
+        plt.clf()
+
+        plt.plot(self.computer_vision_model.history['loss'])
+        plt.plot(self.computer_vision_model.history['val_loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'Validation'], loc='upper left')
+        plt.savefig(self.graph_path + self.model_type + '_lost_' + str(self.number_classes) +'.png', dpi =500)
+        plt.clf()
+
+
+    def plot_prediction_with_model(self):
+
+        plt.figure(dpi=500)
+        predicted_classes = self.model.predict(self.X_test)
+        
+        for i in range(self.number_images_to_plot):
+            plt.subplot(4,4,i+1)
+            plt.axis('off')
+            plt.title("Predicted - {}".format(self.category_names[np.argmax(predicted_classes[i], axis=0)]) + "\n Actual - {}".format(self.category_names[np.argmax(self.Y_test_vec[i,0])]),fontsize=1)
+            plt.tight_layout()
+            plt.savefig(self.graph_path + "model_classification_detection_with_model_trained_prediction" + '.png')
+
+        

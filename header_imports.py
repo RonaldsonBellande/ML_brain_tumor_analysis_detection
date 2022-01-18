@@ -19,6 +19,7 @@ from os import listdir
 from xml.etree import ElementTree
 from matplotlib import pyplot
 from matplotlib.patches import Rectangle
+from mpl_toolkits.mplot3d import Axes3D
 
 from sklearn.tree import DecisionTreeRegressor
 from pandas.plotting import scatter_matrix
