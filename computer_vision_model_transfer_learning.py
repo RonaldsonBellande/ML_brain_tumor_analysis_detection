@@ -45,7 +45,7 @@ class computer_vision_transfer_learning(object):
         self.train_model()
         self.evaluate_model()
         self.plot_model()
-        self.plot_random_examples()
+        self.plot_prediction_with_model()
 
 
     def setup_structure(self):
@@ -112,7 +112,7 @@ class computer_vision_transfer_learning(object):
 
 
     def splitting_data_normalize(self):
-        self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size = 0.10, random_state = 42)
+        self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size=0.10, random_state=42)
         self.input_shape = self.X_train.shape[1:]
         self.Y_train = tf.keras.utils.to_categorical(self.Y_train_vec, self.number_classes)
         self.Y_test = tf.keras.utils.to_categorical(self.Y_test_vec, self.number_classes)
@@ -205,10 +205,10 @@ class computer_vision_transfer_learning(object):
        
         grid = GridSearchCV(estimator = self.model, param_grid = self.param_grid, n_jobs = 1, cv = 3, verbose = 10)
 
-        self.computer_vision_model = self.model.fit(self.X_train, self.Y_train_vec,
-                batch_size=self.batch_size[4],
-                validation_split=0.10,
-                epochs=self.epochs[3],
+        self.computer_vision_model = self.model.fit(self.X_train, self.Y_train,
+                batch_size=self.batch_size[2],
+                validation_split=0.15,
+                epochs=self.epochs[1],
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
 
@@ -216,7 +216,7 @@ class computer_vision_transfer_learning(object):
    
 
     def evaluate_model(self):
-        evaluation = self.model.evaluate(self.X_test, self.Y_test_vec, verbose=1)
+        evaluation = self.model.evaluate(self.X_test, self.Y_test, verbose=1)
 
         with open(self.graph_path + self.model_type + "_evaluate_computer_vision_category_" + str(self.number_classes) + ".txt", 'w') as write:
             write.writelines("Loss: " + str(evaluation[0]) + "\n")
@@ -254,6 +254,7 @@ class computer_vision_transfer_learning(object):
         
         for i in range(self.number_images_to_plot):
             plt.subplot(4,4,i+1)
+            fig=plt.imshow(self.X_test[i,:,:,:])
             plt.axis('off')
             plt.title("Predicted - {}".format(self.category_names[np.argmax(predicted_classes[i], axis=0)]) + "\n Actual - {}".format(self.category_names[np.argmax(self.Y_test_vec[i,0])]),fontsize=1)
             plt.tight_layout()

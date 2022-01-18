@@ -62,7 +62,6 @@ class brain_cancer_building(object):
         elif self.number_classes == 4:
             
             self.category_names = self.advanced_categories 
-
             self.true_path = "brain_cancer_category_4/"
             if self.image_type == "normal":
             	self.true_path = self.true_path + "brain_cancer_seperate_category_4/"
