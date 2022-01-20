@@ -80,6 +80,9 @@ device_name = [x.name for x in device_lib.list_local_devices() if x.device_type 
 if device_name != []:
     device_name = "/device:GPU:0"
     print("GPU")
+    # config.gpu_options.allocator_type='GpuManaged'
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 else:
     device_name = "/device:CPU:0"
     print("CPU")
