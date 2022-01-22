@@ -112,7 +112,7 @@ class computer_vision_localization_detection(utils.Dataset):
         	mask[rr, cc, i] = 1
 
         num_ids = np.array(num_ids, dtype=np.int32)
-        return mask, num_ids #np.ones([mask.shape[-1]], dtype=np.int32)
+        return mask, num_ids
 
     def image_reference(self, image_id):
         """Return the path of the image."""
