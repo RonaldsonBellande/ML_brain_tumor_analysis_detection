@@ -5,6 +5,7 @@ class computer_vision_localization_detection(object):
     def __init__(self, save_model, number_classes):
         
         self.image_file = []
+        self.predicted_classes_array = []
         self.save_model = save_model
         self.model = keras.models.load_model("models/" + self.save_model)
         self.image_path = "brain_cancer_category_2/" + "Testing2/" 
@@ -37,6 +38,7 @@ class computer_vision_localization_detection(object):
         
         self.image_file = np.array(self.image_file)
         self.X_test = self.image_file.astype("float32") / 255
+        print(self.X_test.shape)
     
 
     def split_images(self, image):
@@ -51,14 +53,10 @@ class computer_vision_localization_detection(object):
 
     def plot_prediction_with_model(self):
 
-        plt.figure(dpi=10000)
         predicted_classes = self.model.predict(self.X_test)
 
-        for i in range(self.split_size):
-            plt.subplot(math.sqrt(self.split_size),math.sqrt(self.split_size),i+1)
-            fig=plt.imshow(self.X_test[i,:,:,:])
-            plt.axis('off')
-            plt.title("Predicted - {}".format(self.model_categpory[np.argmax(predicted_classes[i], axis=0)]), fontsize=1)
-            plt.tight_layout()
-            plt.savefig(self.graph_path + "model_detection_localization_with_model_trained_prediction_" + str(self.save_model) + '.png')
+        for i in range(64):
+            
+            if self.number_classes == 2:
+                self.predicted_classes_array.append([np.argmax(predicted_classes[i])][0])
 
