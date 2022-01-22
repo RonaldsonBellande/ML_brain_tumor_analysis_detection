@@ -41,6 +41,7 @@ from mrcnn.config import Config
 from mrcnn.visualize import display_images, display_instances
 # from mrcnn.model import log
 
+import image_slicer
 from numpy import expand_dims
 from keras.models import load_model
 from keras.preprocessing.image import load_img
