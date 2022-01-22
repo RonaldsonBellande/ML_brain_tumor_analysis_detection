@@ -36,7 +36,7 @@ class computer_vision_transfer_learning(object):
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
         self.number_images_to_plot = 16
-        self.graph_path = "graph_charts/"
+        self.graph_path = "graph_charts/" + "transfer_learning_with_model/"
         self.model_path = "models/" 
         self.param_grid = dict(batch_size=self.batch_size, epochs=self.epochs)
         self.callback_1 = TensorBoard(log_dir="logs/{}-{}".format(self.model_type, int(time.time())))
@@ -276,6 +276,6 @@ class computer_vision_transfer_learning(object):
             plt.axis('off')
             plt.title("Predicted - {}".format(self.category_names[np.argmax(predicted_classes[i], axis=0)]) + "\n Actual - {}".format(self.category_names[np.argmax(self.Y_test_vec[i,0])]),fontsize=1)
             plt.tight_layout()
-            plt.savefig(self.graph_path + "model_classification_detection_with_model_trained_prediction" + '.png')
+            plt.savefig(self.graph_path + "model_detection_localization_with_model_trained_prediction_" + str(self.save_model) + '.png')
 
         

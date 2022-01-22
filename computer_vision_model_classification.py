@@ -36,7 +36,6 @@ class classification_with_model(object):
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
         
-
         self.image_file = np.array(self.image_file)
         self.X_test = self.image_file.astype("float32") / 255
 
