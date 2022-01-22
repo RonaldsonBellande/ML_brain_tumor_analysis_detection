@@ -1,20 +1,5 @@
 from header_imports import *
 
-detection_name =  "Detection Traffic Signs"
-
-class detection_config(Config):
-    NAME = detection_name
-    IMAGES_PER_GPU = 1
-    NUM_CLASSES = 43 + 1
-    STEPS_PER_EPOCH = 10
-    DETECTION_MIN_CONFIDENCE = 0.7
-
-config = detection_config()
-
-class detection(config.__class__):
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
-
 
 class computer_vision_localization_detection(utils.Dataset):
     def __init__(self, category, currently_build_model = "normal_category_1_model1_computer_vision_categories_43_model.h5"):
@@ -43,7 +28,6 @@ class computer_vision_localization_detection(utils.Dataset):
                 self.category_names[30]: 31, self.category_names[31]: 32, self.category_names[32]: 33, self.category_names[33]: 34, self.category_names[34]: 35, self.category_names[35]: 36, self.category_names[36]: 37, self.category_names[37]: 38, self.category_names[38]: 39, self.category_names[39]: 40,
                 self.category_names[40]: 41, self.category_names[41]: 42, self.category_names[42]: 43}
 
-
         for i in range(0, 43):
             self.add_class(detection_name, i, self.category_names[i])
 
@@ -53,7 +37,6 @@ class computer_vision_localization_detection(utils.Dataset):
             self.category_names = self.category_names 
 
         self.localization_detection()
-
 
 
     def localization_detection(self):
@@ -92,6 +75,7 @@ class computer_vision_localization_detection(utils.Dataset):
             height, width = image.shape[:2]
 
             self.add_image("object", image_id=a['filename'], path=image_path, width=width, height=height, polygons=polygons, num_ids=num_ids)
+
 
     def load_mask(self, image_id):
        

@@ -78,5 +78,9 @@ if __name__ == "__main__":
             computer_vision_analysis_obj = computer_vision_transfer_learning(save_model=input_model, model_type=sys.argv[3], number_classes=sys.argv[2], image_type=sys.argv[4])
 
 
+        if sys.argv[1] == "":
+            
+
+
 
 
