@@ -79,7 +79,7 @@ info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
 if info.free < 964157696:
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 from tensorflow.python.client import device_lib
 device_name = [x.name for x in device_lib.list_local_devices() if x.device_type == 'GPU']
 
@@ -89,6 +89,7 @@ if device_name != []:
     gpus = tf.config.experimental.list_physical_devices('GPU')
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
+        tf.config.experimental.set_virtual_device_configuration(gpus[0],[tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1024)])
         print("GROWTH")
 else:
     device_name = "/device:CPU:0"

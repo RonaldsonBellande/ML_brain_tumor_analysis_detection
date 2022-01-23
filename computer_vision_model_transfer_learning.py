@@ -110,7 +110,7 @@ class computer_vision_transfer_learning(object):
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
             self.label_name.append(input_file)
-            self.adding_random_noise(image_resized, input_file)
+            # self.adding_random_noise(image_resized, input_file)
 
 
     def adding_random_noise(self, image, input_file):

@@ -33,19 +33,16 @@ class computer_vision_localization_detection(object):
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
-            
             self.split_images(image_resized)
         
         self.image_file = np.array(self.image_file)
         self.X_test = self.image_file.astype("float32") / 255
-        print(self.X_test.shape)
     
 
     def split_images(self, image):
 
         for r in range(0,image.shape[0],int(math.sqrt(self.split_size))):
             for c in range(0,image.shape[1],int(math.sqrt(self.split_size))):
-                
                 image_split = image[r:r+int(math.sqrt(self.split_size)), c:c+int(math.sqrt(self.split_size)),:]
                 image_split = cv2.resize(image_split,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
                 self.image_file.append(image_split)
@@ -55,8 +52,7 @@ class computer_vision_localization_detection(object):
 
         predicted_classes = self.model.predict(self.X_test)
 
-        for i in range(64):
-            
+        for i in range(len(self.image_file)):
             if self.number_classes == 2:
                 self.predicted_classes_array.append([np.argmax(predicted_classes[i])][0])
 
