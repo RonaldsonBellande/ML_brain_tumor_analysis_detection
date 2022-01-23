@@ -25,13 +25,12 @@ class computer_vision_transfer_learning(object):
         self.setup_structure() 
         self.splitting_data_normalize()
         
-        with tensorflow_strategy.scope():
-            if self.model_type == "model1":
-                self.create_models_1()
-            elif self.model_type == "model2":
-                self.create_models_2()
-            elif self.model_type == "model3":
-                self.create_model_3()
+        if self.model_type == "model1":
+            self.create_models_1()
+        elif self.model_type == "model2":
+            self.create_models_2()
+        elif self.model_type == "model3":
+            self.create_model_3()
 
         self.model.load_weights("models/" + self.save_model)
         self.batch_size = [10, 20, 40, 60, 80, 100]

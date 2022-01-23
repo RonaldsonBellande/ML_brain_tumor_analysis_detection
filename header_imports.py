@@ -84,14 +84,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 device_name = [x.name for x in device_lib.list_local_devices() if x.device_type == 'GPU']
 
 if device_name != []:
-    device_name = "/device:GPU:0"
-    print("GPU")
     gpus = tf.config.experimental.list_physical_devices('GPU')
-    for gpu in gpus:
-        # tf.config.experimental.set_memory_growth(gpu, True)
-        # tf.config.experimental.set_virtual_device_configuration(gpu,[tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1024)])
-        tensorflow_strategy = tf.distribute.MirroredStrategy(["GPU:0", "CPU:0"])
-        print("GROWTH")
+    tf.config.experimental.set_memory_growth(gpus[0], True)
+    tensorflow_strategy = tf.distribute.MirroredStrategy(devices= ["/gpu:0", "/cpu:0"],cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
+    print("GPU GROWTH")
 else:
     device_name = "/device:CPU:0"
     tensorflow_strategy = tf.distribute.MirroredStrategy(["CPU:0"])
