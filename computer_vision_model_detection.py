@@ -26,6 +26,8 @@ class computer_vision_localization_detection(object):
 
         self.prepare_image_data()
         self.plot_prediction_with_model()
+        self.segmentation()
+        self.localization()
 
     
     def prepare_image_data(self):
@@ -55,4 +57,14 @@ class computer_vision_localization_detection(object):
         for i in range(len(self.image_file)):
             if self.number_classes == 2:
                 self.predicted_classes_array.append([np.argmax(predicted_classes[i])][0])
+            elif self.number_classes == 4:
+                self.predicted_classes_array.append([np.argmax(predicted_classes[i])][0])
+
+    def segmentation(self):
+        pass
+
+
+    def localization(self):
+        pass
+
 
