@@ -13,7 +13,10 @@ class computer_vision_localization_detection(object):
         self.image_size = 240
         self.number_classes = int(number_classes)
         self.split_size = 900
-
+        self.color = (255, 0, 0)
+  
+        self.thickness = 2
+        self.thickness_fill = -1
         self.graph_path = "graph_charts/" + "detection_localization/"
 
         if self.number_classes == 2:
@@ -60,8 +63,24 @@ class computer_vision_localization_detection(object):
             elif self.number_classes == 4:
                 self.predicted_classes_array.append([np.argmax(predicted_classes[i])][0])
 
+        self.predicted_classes_array = np.reshape(self.predicted_classes_array, ((int(math.sqrt(len(self.image_file)))), (int(math.sqrt(len(self.image_file))))))
+        print(self.predicted_classes_array)
+
     def segmentation(self):
-        pass
+
+        for image in os.listdir(self.image_path):
+            image_resized = cv2.imread(os.path.join(self.image_path, image))
+            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
+        
+        for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
+            for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
+                start_point = (int(r), int(r))
+                end_point = ((int(self.image_size/math.sqrt(len(self.image_file)))),(int(self.image_size/math.sqrt(len(self.image_file)))))
+                print(int(r/(self.image_file/(math.sqrt(len(self.image_file))))))
+                # if self.predicted_classes_array[int(r/(self.image_file/(math.sqrt(len(self.image_file)))))][int(c/(self.image_file/(math.sqrt(len(self.image_file)))))] == 1:
+                    # cv2.rectangle(image_resized, start_point, end_point, self.color, self.thickness)
+
+        cv2.imwrite(self.graph_path + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
 
 
     def localization(self):
