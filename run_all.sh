@@ -44,9 +44,9 @@
 
 
 python3 brain_tumor_analysis.py detection_localization 2 model1
-# python3 brain_tumor_analysis.py detection_localization 2 model2
-# python3 brain_tumor_analysis.py detection_localization 2 model3
+python3 brain_tumor_analysis.py detection_localization 2 model2
+python3 brain_tumor_analysis.py detection_localization 2 model3
 
-# python3 brain_tumor_analysis.py detection_localization 4 model1
-# python3 brain_tumor_analysis.py detection_localization 4 model2
-# python3 brain_tumor_analysis.py detection_localization 4 model3
+python3 brain_tumor_analysis.py detection_localization 4 model1
+python3 brain_tumor_analysis.py detection_localization 4 model2
+python3 brain_tumor_analysis.py detection_localization 4 model3
