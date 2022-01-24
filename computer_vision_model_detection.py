@@ -67,6 +67,20 @@ class computer_vision_localization_detection(object):
 
         self.predicted_classes_array = np.reshape(self.predicted_classes_array, ((int(math.sqrt(len(self.image_file)))), (int(math.sqrt(len(self.image_file))))))
         print(self.predicted_classes_array)
+    
+
+    def prepare_prediction(self):
+
+        for image in os.listdir(self.image_path):
+            image_resized = cv2.imread(os.path.join(self.image_path, image))
+            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
+            self.image_file.append(image_resized)
+        
+        self.image_file_image = np.array(self.image_file)
+        self.X_test_image = self.image_file_image.astype("float32") / 255
+
+
+
 
     def segmentation(self):
 
