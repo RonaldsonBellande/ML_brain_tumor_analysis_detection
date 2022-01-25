@@ -17,8 +17,10 @@ class computer_vision_localization_detection(object):
   
         self.thickness = 1
         self.thickness_fill = -1
-        self.graph_path = "graph_charts/" + "detection_localization/"
-
+        self.graph_path = "graph_charts/" + "detection_localization/" 
+        self.graph_path_localization = "graph_charts/" + "detection_localization/" + "localization/"
+        self.graph_path_detection = "graph_charts/" + "detection_localization/" + "detection/"
+        
         if self.number_classes == 2:
             self.model_categpory = ["False","True"]
             self.image_path = "brain_cancer_category_2/" + "Testing2/" 
@@ -29,7 +31,7 @@ class computer_vision_localization_detection(object):
 
         self.prepare_image_data()
         self.plot_prediction_with_model()
-        self.segmentation()
+        # self.segmentation()
         self.localization()
 
     
@@ -107,11 +109,15 @@ class computer_vision_localization_detection(object):
                             cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
 
 
-        cv2.imwrite(self.graph_path + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
+        cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
 
 
     def localization(self):
         
+        first_predicting_position = None
+        first_prediction = False
+        last_predicting_position = None
+
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
@@ -119,25 +125,35 @@ class computer_vision_localization_detection(object):
         self.prepare_prediction()
         
         for i in range(len(self.image_file_image)):
-
             if self.number_classes == 2:
                 for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                     for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
-                        start_point = (int(r), int(c))
-                        end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
-                        if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                            cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+                        if first_prediction == False:
+                            if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
+                                first_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                                first_prediction == True
+                        last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                        
+                        print(first_prediction)
+                        print("first", first_predicting_position)
+                        print("last", last_predicting_position)
+                        if r == int(math.sqrt(self.split_size)) and c == int(math.sqrt(self.split_size)):
+                            cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
         
             if self.number_classes == 4:
                 for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                     for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
-                        start_point = (int(r), int(c))
-                        end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
-                        if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                            cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+                        if first_prediction == False:
+                            if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
+                                first_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                                first_prediction == True
 
+                        last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                        
+                        if r == (int(math.sqrt(self.split_size)) - 1) and c == (int(math.sqrt(self.split_size)) - 1):
+                            cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
 
-        cv2.imwrite(self.graph_path + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
+        cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
 
 
 
