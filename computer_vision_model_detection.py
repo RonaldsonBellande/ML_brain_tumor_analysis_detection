@@ -13,9 +13,7 @@ class computer_vision_localization_detection(object):
         self.image_size = 240
         self.number_classes = int(number_classes)
         self.split_size = 900
-        self.color1 = (255, 0, 0)
-        self.color2 = (255, 120, 0)
-        self.color3 = (255, 0, 120)
+        self.color = [(255,0,0),(255,120,0),(255,0,120),(255,120.120)] 
   
         self.thickness = 1
         self.thickness_fill = -1
@@ -70,16 +68,16 @@ class computer_vision_localization_detection(object):
     
 
     def prepare_prediction(self):
-
+        
+        self.image_file_image = []
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
-            self.image_file.append(image_resized)
+            self.image_file_image.append(image_resized)
         
-        self.image_file_image = np.array(self.image_file)
+        self.image_file_image = np.array(self.image_file_image)
         self.X_test_image = self.image_file_image.astype("float32") / 255
-
-
+        self.predicted_classes = self.model.predict(self.X_test)
 
 
     def segmentation(self):
@@ -87,29 +85,59 @@ class computer_vision_localization_detection(object):
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
-       
-
-        if self.number_classes == 2:
-            for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
-                for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
-                    start_point = (int(r), int(c))
-                    end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
-                    if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == 1:
-                        cv2.rectangle(image_resized, start_point, end_point, self.color1, self.thickness)
         
-        if self.number_classes == 4:
-             for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
-                for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
-                    start_point = (int(r), int(c))
-                    end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
-                    if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == 1:
-                        cv2.rectangle(image_resized, start_point, end_point, self.color1, self.thickness)
+        self.prepare_prediction()
+        
+        for i in range(len(self.image_file_image)):
+
+            if self.number_classes == 2:
+                for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
+                    for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
+                        start_point = (int(r), int(c))
+                        end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                        if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
+                            cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+        
+            if self.number_classes == 4:
+                for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
+                    for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
+                        start_point = (int(r), int(c))
+                        end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                        if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
+                            cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
 
 
         cv2.imwrite(self.graph_path + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
 
 
     def localization(self):
-        pass
+        
+        for image in os.listdir(self.image_path):
+            image_resized = cv2.imread(os.path.join(self.image_path, image))
+            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
+        
+        self.prepare_prediction()
+        
+        for i in range(len(self.image_file_image)):
+
+            if self.number_classes == 2:
+                for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
+                    for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
+                        start_point = (int(r), int(c))
+                        end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                        if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
+                            cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+        
+            if self.number_classes == 4:
+                for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
+                    for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
+                        start_point = (int(r), int(c))
+                        end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                        if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
+                            cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+
+
+        cv2.imwrite(self.graph_path + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
+
 
 
