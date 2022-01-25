@@ -13,7 +13,8 @@ class computer_vision_localization_detection(object):
         self.image_size = 240
         self.number_classes = int(number_classes)
         self.split_size = 900
-        self.color = [(255,0,0),(255,120,0),(255,0,120),(255,120.120)] 
+        self.color = [(255,0,0),(255,120,0),(255,0,120),(255,120.120)]
+        self.font = cv2.FONT_HERSHEY_SIMPLEX
   
         self.thickness = 1
         self.thickness_fill = -1
@@ -138,6 +139,7 @@ class computer_vision_localization_detection(object):
                             print(first_predicting_position)
                             print(last_predicting_position)
                             cv2.rectangle(image_resized, first_predicting_position, (210,210), self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+                            cv2.putText(image, 'OpenCV', org, self.font,fontScale, self.color[np.argmax(self.predicted_classes[i])][0], thickness, cv2.LINE_AA)
         
             if self.number_classes == 4:
                 for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
