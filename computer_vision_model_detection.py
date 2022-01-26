@@ -135,15 +135,16 @@ class computer_vision_localization_detection(object):
                                 first_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                                 first_prediction = True
 
-                        if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
+                        elif self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
                             last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                         
-                        if r ==  and c == :
+                        if r == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))) and c == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))):
                             print(first_predicting_position)
                             print(last_predicting_position)
-                            cv2.rectangle(image_resized, first_predicting_position, (210,210), self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+                            cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
                             cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
-        
+       
+
             if self.number_classes == 4:
                 for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                     for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
@@ -153,7 +154,7 @@ class computer_vision_localization_detection(object):
                                 first_prediction = True
                         last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                         
-                        if r == int(math.sqrt(self.split_size)) and c == int(math.sqrt(self.split_size)):
+                        if r == ((int(math.sqrt(self.split_size))*(math.sqrt(len(self.image_file))))) and c == ((int(math.sqrt(self.split_size)*(math.sqrt(len(self.image_file)))))):
                             print("here")
                             cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
 
