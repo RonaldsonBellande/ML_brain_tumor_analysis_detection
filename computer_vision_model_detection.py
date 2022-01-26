@@ -12,7 +12,7 @@ class computer_vision_localization_detection(object):
 
         self.image_size = 240
         self.number_classes = int(number_classes)
-        self.split_size = 225
+        self.split_size = 100
         self.color = [(255,0,0),(255,120,0),(255,0,120),(255,120.120)]
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.alpha = 0.5
@@ -87,6 +87,7 @@ class computer_vision_localization_detection(object):
 
     def segmentation(self):
 
+        first_prediction = False
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
@@ -98,7 +99,10 @@ class computer_vision_localization_detection(object):
             if self.number_classes == 2:
                 for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                     for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
-                        start_point = (int(r), int(c))
+                        if first_prediction == False:
+                            start_point = (int(r), int(c))
+                            first_prediction = True
+                        
                         end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                         
                         if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
@@ -110,7 +114,11 @@ class computer_vision_localization_detection(object):
             if self.number_classes == 4:
                 for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                     for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
-                        start_point = (int(r), int(c))
+                        if first_prediction == False:
+                            start_point = (int(r), int(c))
+                            first_prediction = True
+                        
+
                         end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                         
                         if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
