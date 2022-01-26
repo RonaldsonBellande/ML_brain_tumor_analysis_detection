@@ -13,9 +13,9 @@ class computer_vision_localization_detection(object):
         self.image_size = 240
         self.number_classes = int(number_classes)
         self.split_size = 100
-        self.color = [(210,0,100),(310,0,100),(310,0,100),(310,0,100)]
+        self.color = [(0,255,255),(0,0,255),(0,255,0),(255,0,0)]
         self.font = cv2.FONT_HERSHEY_SIMPLEX
-        self.alpha = 0.5
+        self.alpha = 0.4
         self.fontScale = 0.5
         self.thickness = 1
 
@@ -35,7 +35,7 @@ class computer_vision_localization_detection(object):
         self.prepare_image_data()
         self.plot_prediction_with_model()
         self.segmentation()
-        # self.localization()
+        self.localization()
 
     
     def prepare_image_data(self):
@@ -69,7 +69,6 @@ class computer_vision_localization_detection(object):
                 self.predicted_classes_array.append([np.argmax(predicted_classes[i])][0])
 
         self.predicted_classes_array = np.reshape(self.predicted_classes_array, ((int(math.sqrt(len(self.image_file)))), (int(math.sqrt(len(self.image_file))))))
-        print(self.predicted_classes_array)
     
 
     def prepare_prediction(self):
@@ -91,7 +90,6 @@ class computer_vision_localization_detection(object):
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
-            image_resized = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
         
             image_resized_original = image_resized.copy()
             self.prepare_prediction()
@@ -107,7 +105,7 @@ class computer_vision_localization_detection(object):
                             start_point = (int(r), int(c))
                             end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                             if self.predicted_classes_array[int(c/(self.image_size/(math.sqrt(len(self.image_file)))))][int(r/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                                image_resized=cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness_fill)
+                                image_resized=cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness_fill)
                                 image_resized=cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), word_point, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
            
 
@@ -121,7 +119,7 @@ class computer_vision_localization_detection(object):
                             start_point = (int(r), int(c))
                             end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                             if self.predicted_classes_array[int(c/(self.image_size/(math.sqrt(len(self.image_file)))))][int(r/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                                image_resized=cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness_fill)
+                                image_resized=cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness_fill)
                                 image_resized=cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), word_point, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
         
             image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
@@ -153,7 +151,7 @@ class computer_vision_localization_detection(object):
                                 last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                         
                             if c == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))) and r == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))):
-                                cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+                                image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
                                 cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
 
 
@@ -169,7 +167,7 @@ class computer_vision_localization_detection(object):
                                 last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                         
                             if c == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))) and r == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))):
-                                cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness)
+                                image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
                                 cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
 
 

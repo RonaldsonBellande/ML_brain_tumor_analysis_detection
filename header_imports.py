@@ -80,18 +80,20 @@ info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
 if info.free < 964157696:
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 device_name = [x.name for x in device_lib.list_local_devices() if x.device_type == 'GPU']
 
 if device_name != []:
     gpus = tf.config.experimental.list_physical_devices('GPU')
     tf.config.experimental.set_memory_growth(gpus[0], True)
-    tensorflow_strategy = tf.distribute.MirroredStrategy(devices= ["/gpu:0", "/cpu:0"],cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
+    tf.config.experimental.set_virtual_device_configuration(gpus[0],[tf.config.experimental.VirtualDeviceConfiguration(memory_limit=512)])
+    tensorflow_strategy = tf.distribute.MirroredStrategy(devices= ["/cpu:0", "/gpu:0"],cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
     print("GPU GROWTH")
 else:
     device_name = "/device:CPU:0"
     tensorflow_strategy = tf.distribute.MirroredStrategy(["CPU:0"])
     print("CPU")
+
 
 from utilities import *
 from brain_tumor_model_building import *
