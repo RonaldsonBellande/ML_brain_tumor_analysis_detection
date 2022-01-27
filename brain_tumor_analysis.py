@@ -117,7 +117,7 @@ if __name__ == "__main__":
                 elif sys.argv[3] == "model3":
                     input_model = "normal_model3_brain_tumor_categories_4_model.h5"
             
-            computer_vision_analysis_obj = computer_vision_localization_detection(save_model=input_model, number_classes=sys.argv[2])
+            computer_vision_analysis_obj = computer_vision_segmentation(save_model=input_model, number_classes=sys.argv[2])
 
 
 
