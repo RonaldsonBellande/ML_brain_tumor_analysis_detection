@@ -1,6 +1,5 @@
 from header_imports import *
 
-
 class computer_vision_localization_detection(object):
     def __init__(self, save_model, number_classes):
         
@@ -106,7 +105,7 @@ class computer_vision_localization_detection(object):
                             end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                             if self.predicted_classes_array[int(c/(self.image_size/(math.sqrt(len(self.image_file)))))][int(r/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
                                 image_resized=cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness_fill)
-                                image_resized=cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), word_point, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
+                                image_resized=cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), word_point, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
            
 
                 if self.number_classes == 4:
@@ -120,7 +119,7 @@ class computer_vision_localization_detection(object):
                             end_point = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
                             if self.predicted_classes_array[int(c/(self.image_size/(math.sqrt(len(self.image_file)))))][int(r/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
                                 image_resized=cv2.rectangle(image_resized, start_point, end_point, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness_fill)
-                                image_resized=cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), word_point, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
+                                image_resized=cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), word_point, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
         
             image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
             cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
@@ -152,7 +151,7 @@ class computer_vision_localization_detection(object):
                         
                             if c == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))) and r == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))):
                                 image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
-                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
+                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
 
                 if self.number_classes == 4:
@@ -168,7 +167,7 @@ class computer_vision_localization_detection(object):
                         
                             if c == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))) and r == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))):
                                 image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
-                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i])][0], self.thickness, cv2.LINE_AA)
+                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
 
             cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + '.png', image_resized)
