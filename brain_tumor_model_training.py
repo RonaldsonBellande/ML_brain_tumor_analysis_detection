@@ -29,9 +29,9 @@ class brain_tumor_training(brain_cancer_building):
         self.get_training_time("starting --: ")
 
         self.brain_cancer_model = self.model.fit(self.X_train, self.Y_train,
-                batch_size=self.batch_size[2],
+                batch_size=self.batch_size[3],
                 validation_split=0.15,
-                epochs=self.epochs[1],
+                epochs=self.epochs[4],
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
        

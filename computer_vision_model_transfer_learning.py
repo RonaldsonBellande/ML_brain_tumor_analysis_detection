@@ -224,7 +224,7 @@ class computer_vision_transfer_learning(object):
         grid = GridSearchCV(estimator = self.model, param_grid = self.param_grid, n_jobs = 1, cv = 3, verbose = 10)
 
         self.computer_vision_model = self.model.fit(self.X_train, self.Y_train,
-                batch_size=self.batch_size[2],
+                batch_size=self.batch_size[3],
                 validation_split=0.15,
                 epochs=self.epochs[3],
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
