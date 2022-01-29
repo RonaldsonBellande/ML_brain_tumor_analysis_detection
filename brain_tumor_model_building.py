@@ -37,7 +37,7 @@ class brain_cancer_building(object):
         elif self.model_type == "model3":
             self.create_model_3()
 
-        self.save_model_summary()
+        #self.save_model_summary()
 
     
     def setup_structure(self):
