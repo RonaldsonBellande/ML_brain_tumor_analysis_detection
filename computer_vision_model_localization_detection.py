@@ -11,7 +11,7 @@ class computer_vision_localization_detection(object):
 
         self.image_size = 240
         self.number_classes = int(number_classes)
-        self.split_size = 100
+        self.split_size = 25
         self.color = [(0,255,255),(0,0,255),(0,255,0),(255,0,0)]
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.alpha = 0.4
@@ -66,7 +66,7 @@ class computer_vision_localization_detection(object):
             elif self.number_classes == 4:
                 self.predicted_classes_array.append([np.argmax(predicted_classes[i])][0])
 
-        self.predicted_classes_array = np.array(self.predicted_classes_array, ((int(math.sqrt(len(self.image_file)))), (int(math.sqrt(len(self.image_file))))))
+        self.predicted_classes_array = np.reshape(self.predicted_classes_array, ((int(math.sqrt(len(self.image_file)))), (int(math.sqrt(len(self.image_file))))))
     
 
     def prepare_prediction(self):
@@ -110,6 +110,7 @@ class computer_vision_localization_detection(object):
                                 image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
                                 cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
+                        cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
 
                 if self.number_classes == 4:
                     for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
@@ -127,7 +128,7 @@ class computer_vision_localization_detection(object):
                                 cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
 
-                        cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + + '.png', image_resized)
+                        cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
 
 
 

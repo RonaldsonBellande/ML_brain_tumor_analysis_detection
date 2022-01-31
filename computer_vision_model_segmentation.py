@@ -11,7 +11,7 @@ class computer_vision_segmentation(object):
 
         self.image_size = 240
         self.number_classes = int(number_classes)
-        self.split_size = 100
+        self.split_size = 25
         self.color = [(0,255,255),(0,0,255),(0,255,0),(255,0,0)]
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.alpha = 0.4
@@ -95,8 +95,8 @@ class computer_vision_segmentation(object):
                                     image_resized=cv2.rectangle(image_resized, start_point, end_point, self.color[i], self.thickness_fill)
                                     image_resized=cv2.putText(image_resized, str((self.model_categpory[i])), word_point, self.font, self.fontScale, self.color[i], self.thickness, cv2.LINE_AA)
 
-                        image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
-                        cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model)  + str(image) + str(j) + '.png', image_resized)
+                    image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
+                    cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model)  + str(image) + str(j) + '.png', image_resized)
            
                 if self.number_classes == 4:
                     for i in range(len(self.model_categpory)):
@@ -113,8 +113,8 @@ class computer_vision_segmentation(object):
                                     image_resized=cv2.putText(image_resized, str((self.model_categpory[i])), word_point, self.font, self.fontScale, self.color[i], self.thickness, cv2.LINE_AA)       
             
 
-                        image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
-                        cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + str(j) + '.png', image_resized)
+                    image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
+                    cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + str(j) + '.png', image_resized)
 
 
 
