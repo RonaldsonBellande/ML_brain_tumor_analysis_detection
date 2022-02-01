@@ -82,17 +82,29 @@ class computer_vision_localization_detection(object):
         
         self.image_file_image = np.array(self.image_file_image)
         self.X_test_image = self.image_file_image.astype("float32") / 255
-        self.predicted_classes = self.model.predict(self.X_test)
+        self.predicted_classes = self.model.predict(self.X_test_image)
     
+    
+    def predict_parts_images(self, index):
+        
+        image_box = []
+        for image in os.listdir(self.image_path):
+            image_resized = cv2.imread(os.path.join(self.image_path, image))
+            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
+            image_box.append(image_resized)
+        
+        image_box = np.array(image_box)
+        X_test_image_box = image_box.astype("float32") / 255
+        predicted_classes = self.model.predict(X_test_image_box)
+        return predicted_classes
 
+        
     def localization(self):
         
-        first_predicting_position = None
+        predicting_position = None
         first_prediction = False
-        last_predicting_position = None
         
-        index_x = None
-        index_y = None
+        validation_matrix = None
 
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
@@ -105,20 +117,29 @@ class computer_vision_localization_detection(object):
                     for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                         for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
                             if first_prediction == False:
-                                if self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))] == [np.argmax(self.predicted_classes[i], axis=0)]:
-                                    first_predicting_position = (int(r+(math.sqrt(self.split_size))), int(c+(math.sqrt(self.split_size))))
-                                    first_prediction = True
-
-                            elif self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))] == [np.argmax(self.predicted_classes[i], axis=0)]:
-                                last_predicting_position = (int(r+(math.sqrt(self.split_size))), int(c+(math.sqrt(self.split_size))))
                             
                             for i in range(self.validation_size):
                                 for ii in range(self.validation_size):
-                                    if self.predicted_classes_array[int(c/((math.sqrt(self.split_size)*(i+1))))][int(r/((math.sqrt(self.split_size)*(ii+1))))] == [np.argmax(self.predicted_classes[i], axis=0)]:
-                            
-                            if c == int(self.image_size-(self.image_size/(math.sqrt(self.split_size)))) and r == int(self.image_size-(math.sqrt(self.split_size))):
-                                image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
-                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i], axis=0)])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
+                                    if self.predicted_classes_array[int(r/((math.sqrt(self.split_size)*(i+1))))][int(c/((math.sqrt(self.split_size)*(ii+1))))] == [np.argmax(self.predicted_classes[i], axis=0)]:
+                                        validation_matrix.append(1)
+                                    else:
+                                        validation_matrix.append(0)
+
+                            percentage_list = [((counter[i].get(j) if counter[i].get(j) else 0)*10000)//len(validation_matrix[i])/100.0 for i in range(len(validation_matrix)) for j in range(self.validation_size)]
+
+                            if first_prediction == False:
+                                if percentage_list > 0.75:
+                                    predicting_position[0] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
+                                    first_prediction = True
+
+                            elif percentage_list < 0.45:
+                                predicting_position[1] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
+
+                    
+                    for i in range(len(self.box_index)):
+                        prediction = self.predict_parts_images(self.box_index)
+                        image_resized=cv2.rectangle(image_resized, self.box_index[i][0], self.box_index[i][1], self.color[np.argmax(prediction[i], axis=0)], self.thickness)
+                        cv2.putText(image_resized, str((self.model_categpory[np.argmax(prediction[i], axis=0)])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
                     cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
 
