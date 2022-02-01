@@ -11,7 +11,10 @@ class computer_vision_localization_detection(object):
 
         self.image_size = 240
         self.number_classes = int(number_classes)
-        self.split_size = 25
+        self.split_size = 900
+        self.validation_size = 3
+        
+        self.box_index = []
         self.color = [(0,255,255),(0,0,255),(0,255,0),(255,0,0)]
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.alpha = 0.4
@@ -80,13 +83,16 @@ class computer_vision_localization_detection(object):
         self.image_file_image = np.array(self.image_file_image)
         self.X_test_image = self.image_file_image.astype("float32") / 255
         self.predicted_classes = self.model.predict(self.X_test)
-
+    
 
     def localization(self):
         
         first_predicting_position = None
         first_prediction = False
         last_predicting_position = None
+        
+        index_x = None
+        index_y = None
 
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
@@ -99,36 +105,40 @@ class computer_vision_localization_detection(object):
                     for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                         for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
                             if first_prediction == False:
-                                if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                                    first_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                                if self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))] == [np.argmax(self.predicted_classes[i], axis=0)]:
+                                    first_predicting_position = (int(r+(math.sqrt(self.split_size))), int(c+(math.sqrt(self.split_size))))
                                     first_prediction = True
 
-                            elif self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                                last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
-                        
-                            if c == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))) and r == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))):
+                            elif self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))] == [np.argmax(self.predicted_classes[i], axis=0)]:
+                                last_predicting_position = (int(r+(math.sqrt(self.split_size))), int(c+(math.sqrt(self.split_size))))
+                            
+                            for i in range(self.validation_size):
+                                for ii in range(self.validation_size):
+                                    if self.predicted_classes_array[int(c/((math.sqrt(self.split_size)*(i+1))))][int(r/((math.sqrt(self.split_size)*(ii+1))))] == [np.argmax(self.predicted_classes[i], axis=0)]:
+                            
+                            if c == int(self.image_size-(self.image_size/(math.sqrt(self.split_size)))) and r == int(self.image_size-(math.sqrt(self.split_size))):
                                 image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
-                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
+                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i], axis=0)])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
-                        cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
+                    cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
 
                 if self.number_classes == 4:
                     for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                         for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
                             if first_prediction == False:
-                                if self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                                    first_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                                if self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))] == [np.argmax(self.predicted_classes[i], axis=0)]:
+                                    first_predicting_position = (int(r+(math.sqrt(self.split_size))), int(c+(math.sqrt(self.split_size))))
                                     first_prediction = True
 
-                            elif self.predicted_classes_array[int(r/(self.image_size/(math.sqrt(len(self.image_file)))))][int(c/(self.image_size/(math.sqrt(len(self.image_file)))))] == [np.argmax(self.predicted_classes[i])][0]:
-                                last_predicting_position = (int(r+(self.image_size/math.sqrt(len(self.image_file)))), int(c+(self.image_size/math.sqrt(len(self.image_file)))))
+                            elif self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))] == [np.argmax(self.predicted_classes[i], axis=0)]:
+                                last_predicting_position = (int(r+(math.sqrt(self.split_size))), int(c+(math.sqrt(self.split_size))))
                         
-                            if c == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))) and r == int(self.image_size-(self.image_size/(math.sqrt(len(self.image_file))))):
+                            if c == int(self.image_size-(math.sqrt(self.split_size))) and r == int(self.image_size-(math.sqrt(self.split_size))):
                                 image_resized=cv2.rectangle(image_resized, first_predicting_position, last_predicting_position, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness)
-                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i])])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
+                                cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i], axis=0)])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
 
-                        cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
+                    cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
 
 
 
