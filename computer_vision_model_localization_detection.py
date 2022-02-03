@@ -103,8 +103,8 @@ class computer_vision_localization_detection(object):
         
         predicting_position = None
         first_prediction = False
-        counter = [] 
         validation_matrix = []
+        percentage_list = []
 
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
@@ -123,18 +123,19 @@ class computer_vision_localization_detection(object):
                                     else:
                                         validation_matrix.append(0)
 
-                            percentage_list = validation_matrix.count(1) / len(validation_matrix)
-                            print(percentage_list)
+                            percentage = validation_matrix.count(1) / len(validation_matrix)
+                            percentage_list.append(percentage)
                             
                             if first_prediction == False:
-                                if percentage_list > 0.75:
+                                if percentage > 0.75:
                                     predicting_position[0] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
                                     first_prediction = True
 
-                            elif percentage_list < 0.45:
+                            elif percentage < 0.45:
                                 predicting_position[1] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
 
-                    
+                    print(percentage_list)
+
                     for jjj in range(len(self.box_index)):
                         prediction = self.predict_parts_images(self.box_index)
                         image_resized=cv2.rectangle(image_resized, self.box_index[jjj][0], self.box_index[jjj][1], self.color[np.argmax(prediction[i], axis=0)], self.thickness)
