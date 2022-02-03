@@ -11,8 +11,8 @@ class computer_vision_localization_detection(object):
 
         self.image_size = 240
         self.number_classes = int(number_classes)
-        self.split_size = 900
-        self.validation_size = 3
+        self.split_size = 25
+        self.validation_size = 10
         
         self.box_index = []
         self.color = [(0,255,255),(0,0,255),(0,255,0),(255,0,0)]
@@ -103,8 +103,8 @@ class computer_vision_localization_detection(object):
         
         predicting_position = None
         first_prediction = False
-        
-        validation_matrix = None
+        counter = [] 
+        validation_matrix = []
 
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
@@ -116,17 +116,16 @@ class computer_vision_localization_detection(object):
                 if self.number_classes == 2:
                     for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
                         for c in range(0,image_resized.shape[1],int(math.sqrt(self.split_size))):
-                            if first_prediction == False:
-                            
-                            for i in range(self.validation_size):
-                                for ii in range(self.validation_size):
-                                    if self.predicted_classes_array[int(r/((math.sqrt(self.split_size)*(i+1))))][int(c/((math.sqrt(self.split_size)*(ii+1))))] == [np.argmax(self.predicted_classes[i], axis=0)]:
+                            for j in range(self.validation_size):
+                                for jj in range(self.validation_size):
+                                    if self.predicted_classes_array[int(r/((math.sqrt(self.split_size)*(j+1))))][int(c/((math.sqrt(self.split_size)*(jj+1))))] == [np.argmax(self.predicted_classes[i], axis=0)]:
                                         validation_matrix.append(1)
                                     else:
                                         validation_matrix.append(0)
 
-                            percentage_list = [((counter[i].get(j) if counter[i].get(j) else 0)*10000)//len(validation_matrix[i])/100.0 for i in range(len(validation_matrix)) for j in range(self.validation_size)]
-
+                            percentage_list = validation_matrix.count(1) / len(validation_matrix)
+                            print(percentage_list)
+                            
                             if first_prediction == False:
                                 if percentage_list > 0.75:
                                     predicting_position[0] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
@@ -136,9 +135,9 @@ class computer_vision_localization_detection(object):
                                 predicting_position[1] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
 
                     
-                    for i in range(len(self.box_index)):
+                    for jjj in range(len(self.box_index)):
                         prediction = self.predict_parts_images(self.box_index)
-                        image_resized=cv2.rectangle(image_resized, self.box_index[i][0], self.box_index[i][1], self.color[np.argmax(prediction[i], axis=0)], self.thickness)
+                        image_resized=cv2.rectangle(image_resized, self.box_index[jjj][0], self.box_index[jjj][1], self.color[np.argmax(prediction[i], axis=0)], self.thickness)
                         cv2.putText(image_resized, str((self.model_categpory[np.argmax(prediction[i], axis=0)])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
                     cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
