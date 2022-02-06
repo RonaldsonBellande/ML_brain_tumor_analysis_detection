@@ -44,8 +44,7 @@ from mrcnn.visualize import display_images, display_instances
 import image_slicer
 from numpy import expand_dims
 from keras.models import load_model
-from keras.preprocessing.image import load_img
-from keras.preprocessing.image import img_to_array
+from keras.preprocessing.image import load_img, img_to_array
 
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
