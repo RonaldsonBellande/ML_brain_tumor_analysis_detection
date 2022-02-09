@@ -57,8 +57,8 @@ class computer_vision_localization_detection(object):
             self.image_path = "brain_cancer_category_4/" + "Testing2/" 
         
         self.localization()
-        self.prepare_image_data()
-        self.plot_prediction_with_model()
+        # self.prepare_image_data()
+        # self.plot_prediction_with_model()
 
 
     def get_label(self):
@@ -82,6 +82,7 @@ class computer_vision_localization_detection(object):
  
 
     def decode_netout(self, predicted_classes_network, anchors):
+        print(predicted_classes_network)
         grid_h, grid_w = predicted_classes_network.shape[:2]
         predicted_classes_network = predicted_classes_network.reshape((grid_h, grid_w, self.number_box, -1))
         nb_class = predicted_classes_network.shape[-1] - 5
@@ -90,7 +91,7 @@ class computer_vision_localization_detection(object):
         predicted_classes_network[..., :2]  = 1.0 / (1.0 + np.exp(-(predicted_classes_network[..., :2])))
         predicted_classes_network[..., 4:]  = 1.0 / (1.0 + np.exp(-(predicted_classes_network[...,4:])))
         predicted_classes_network[..., 5:]  = predicted_classes_network[..., 4][..., np.newaxis] * predicted_classes_network[..., 5:]
-        predicted_classes_network[..., 5:] *= predicted_classes_network[..., 5:] > self.class_threshold = 0.3
+        predicted_classes_network[..., 5:] *= predicted_classes_network[..., 5:] > self.class_threshold
  
         for i in range(grid_h*grid_w):
             row = i / grid_w
@@ -98,7 +99,7 @@ class computer_vision_localization_detection(object):
             for b in range(nb_box):
                 # 4th element is objectness score
                 objectness = predicted_classes_network[int(row)][int(col)][b][4]
-                if(objectness.all() <= self.class_threshold = 0.3): continue
+                if(objectness.all() <= self.class_threshold): continue
                 x, y, w, h = predicted_classes_network[int(row)][int(col)][b][:4]
                 x = (col + x) / grid_w 
                 y = (row + y) / grid_h 
@@ -191,7 +192,7 @@ class computer_vision_localization_detection(object):
     def localization(self):
 
         for image in os.listdir(self.image_path):
-            image_name = DATA_PATH + 'train_images/' + image
+            image_name = self.image_path + image
     
             image_resized = cv2.imread(os.path.join(self.image_path, image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
