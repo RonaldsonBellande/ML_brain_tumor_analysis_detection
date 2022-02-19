@@ -104,4 +104,5 @@ from computer_vision_model_segmentation import *
 from computer_vision_model_transfer_learning import *
 from deep_learning_model import *
 from deep_q_learning import *
+from continuous_learning import *
 

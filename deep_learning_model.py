@@ -1,8 +1,8 @@
 from header_import import *
 
 
-class DeepQLearning(MountainCar3D):
-    def __init__ (self, state_space=(4,), action_space=5, dense_size=6, batch_size=200, algorithm_name="deep_q_learning", transfer_learning="true", image_base="false"):
+class DeepQLearning(continous_learning_structure):
+    def __init__ (self, dense_size=6, batch_size=200, algorithm_name="deep_q_learning", transfer_learning="true", image_base="false"):
         super().__init__()
 
         self.delay_memory = 50000
@@ -21,7 +21,13 @@ class DeepQLearning(MountainCar3D):
         self.model_path = "models/" + self.algorithm_name + "_model.h5"
         self.optimizer = tf.keras.optimizers.Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999)
         self.transfer_learning = transfer_learning
-        self.model = self.create_model()
+
+        if self.model_type == "model1":
+            self.model = self.create_models_1()
+        elif self.model_type == "model2":
+            self.model = self.create_models_2()
+        elif self.model_type == "model3":
+            self.model = self.create_model_3()
         
         if self.transfer_learning == "true":
             self.model.load_weights(self.model_path)
@@ -44,39 +50,73 @@ class DeepQLearning(MountainCar3D):
             self.update_target_model()
 
 
-    def create_model(self):
-        layer_input_shape = self.state_space
+    def create_models_1(self):
 
-        if self.image_base == "true":
-            model = Sequential()
-            model = Conv2D(layer_input_shape, filters=32, kernel_size=(3,3), strides=(2,2), activation="relu")
-            model = Conv2D(model, filters=64, kernel_size=(3,3), strides=(1,1), activation="relu")
-            model = Flatten(model)
-            layer_input_shape = model
+        self.model = Sequential()
+        self.model.add(Conv2D(filters=64, kernel_size=(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
+        self.model.add(MaxPooling2D(pool_size = (4,4)))
+        self.model.add(Dropout(0.25))
+        self.model.add(Conv2D(filters=32, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
+        self.model.add(MaxPooling2D(pool_size = (2,2)))
+        self.model.add(Dropout(0.25))
+        self.model.add(Conv2D(filters=16, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
+        self.model.add(MaxPooling2D(pool_size = (1,1)))
+        self.model.add(Dropout(0.25))
+        self.model.add(Flatten())
+        self.model.add(Dense(units = self.number_classes, activation = "softmax", input_dim=2))
+        self.model.compile(loss = "binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+
+        return self.model
+
+    
+    def create_models_2(self):
+
+        self.model = Sequential()
+        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu", input_shape = self.input_shape))
+        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu"))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Dropout(rate=0.25))
+        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
+        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Dropout(rate=0.25))
+        self.model.add(Flatten())
+        self.model.add(Dense(units=self.number_of_nodes, activation="relu"))
+        self.model.add(Dropout(rate=0.5))
+        self.model.add(Dense(units = self.number_classes, activation="softmax"))
+        self.model.compile(loss = 'binary_crossentropy', optimizer ='adam', metrics= ['accuracy'])
+	
+        return self.model
 
 
-        if self.algorithm_name == "dueling_deep_q_learning":
-            
-            inputs = Input(shape=layer_input_shape)
+    def create_model_3(self):
 
-            advantage_stream = Dense(16, activation="relu")(inputs)
-            value_stream = Dense(16, activation="relu")(inputs)
-            advantage = Dense(self.action_space, activation="relu")(advantage_stream)
-            value = Dense(1, activation="relu")(value_stream)
-		    
-            model = value + (advantage - tf.reduce_mean(advantage, axis=1, keepdims=True))
-
-            model = Model(inputs = inputs, outputs = model)
-            model.compile(loss="mse", optimizer=self.optimizer, metrics=["accuracy"])
-            return model
+        self.model = Sequential()
+        self.MyConv(first = True)
+        self.MyConv()
+        self.MyConv()
+        self.MyConv()
+        self.model.add(Flatten())
+        self.model.add(Dense(units = self.number_classes, activation = "softmax", input_dim=2))
+        self.model.compile(loss = "binary_crossentropy", optimizer ="adam", metrics= ["accuracy"])
         
+        return self.model
+        
+
+    def MyConv(self, first = False):
+        if first == False:
+            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding="same",
+                input_shape = self.input_shape))
         else:
-            model = Sequential()
-            model.add(Dense(input_shape=self.state_space, activation="relu"))
-            model.add(Dense(self.dense_size, activation="relu"))
-            model.add(Dense(units=self.action_space, activation="linear"))
-            model.compile(loss="mse", optimizer=self.optimizer, metrics=["accuracy"])
-            return model
+            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding="same",
+                 input_shape = self.input_shape))
+    
+        self.model.add(Activation("relu"))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Dropout(0.5))
+        self.model.add(Conv2D(32, (4, 4),strides = (1,1),padding="same"))
+        self.model.add(Activation("relu"))
+        self.model.add(Dropout(0.25))
 
 
     def update_replay_memory(self, transition):
