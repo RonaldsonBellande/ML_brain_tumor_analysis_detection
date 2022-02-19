@@ -95,10 +95,13 @@ else:
 
 
 from utilities import *
-from brain_tumor_model_building import *
-from brain_tumor_model_training import *
+from computer_vision_model_building import *
+from computer_vision_model_training import *
 from computer_vision_model_classification import *
 from computer_vision_model_prediction import *
 from computer_vision_model_localization_detection import *
 from computer_vision_model_segmentation import *
 from computer_vision_model_transfer_learning import *
+from deep_learning_model import *
+from deep_q_learning import *
+

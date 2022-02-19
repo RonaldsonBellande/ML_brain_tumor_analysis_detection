@@ -56,6 +56,7 @@ class computer_vision_localization_detection(object):
             self.model_categpory = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
             self.image_path = "brain_cancer_category_4/" + "Testing2/" 
         
+        self.get_boxes_bounderies()
         self.localization_detection()
         # self.prepare_image_data()
         # self.plot_prediction_with_model()
@@ -83,9 +84,9 @@ class computer_vision_localization_detection(object):
 
     def decode_netout(self, predicted_classes_network, anchors):
         print(predicted_classes_network)
-        grid_h, grid_w = predicted_classes_network.shape[:2]
-        predicted_classes_network = predicted_classes_network.reshape((grid_h, grid_w, self.number_box, -1))
-        nb_class = predicted_classes_network.shape[-1] - 5
+        # grid_h, grid_w = predicted_classes_network.shape[:2]
+        # predicted_classes_network = predicted_classes_network.reshape((grid_h, grid_w, self.number_box, -1))
+        # nb_class = predicted_classes_network.shape[-1] - 5
 
         boxes = []
         predicted_classes_network[..., :2]  = 1.0 / (1.0 + np.exp(-(predicted_classes_network[..., :2])))
@@ -209,6 +210,8 @@ class computer_vision_localization_detection(object):
             self.draw_boxes(boxes, class_threshold)
 
 
+
+
     def prepare_image_data(self):
     
         for image in os.listdir(self.image_path):
@@ -297,11 +300,11 @@ class computer_vision_localization_detection(object):
                             percentage_list.append(percentage)
                            
                             if first_prediction == False:
-                                if percentage > 0.75:
+                                if percentage > self.class_threshold_max:
                                     predicting_position[0] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
                                     first_prediction = True
 
-                            elif percentage < 0.45:
+                            elif percentage < self.class_threshold:
                                 predicting_position[1] = self.predicted_classes_array[int(r/(math.sqrt(self.split_size)))][int(c/(math.sqrt(self.split_size)))]
 
                     print(percentage_list)
