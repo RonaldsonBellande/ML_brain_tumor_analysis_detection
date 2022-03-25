@@ -1,7 +1,7 @@
 from header_imports import *
 
 
-class computer_vision_transfer_learning(object):
+class computer_vision_transfer_learning(model):
     def __init__(self, save_model, model_type, number_classes, image_type, random_noise_count):
         
         self.image_file = []
