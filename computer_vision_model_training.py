@@ -1,7 +1,7 @@
 from header_imports import *
 
 
-class brain_tumor_training(brain_cancer_building):
+class computer_vision_training(brain_cancer_building):
     def __init__(self, number_classes, model_type, image_type):
         super().__init__(number_classes, model_type, image_type)
 

@@ -93,6 +93,7 @@ else:
    tensorflow_strategy = tf.distribute.MirroredStrategy(["CPU:0"])
    print("CPU")
 
+
 from all_models import *
 from plot_and_animation import *
 from utilities import *

@@ -1,6 +1,6 @@
 from header_imports import *
 
-class brain_cancer_building(models):
+class model_building(models):
     def __init__(self, number_classes, model_type, image_type):
 
         """
@@ -37,7 +37,7 @@ class brain_cancer_building(models):
         elif self.model_type == "model3":
             self.model = self.create_model_3()
 
-        #self.save_model_summary()
+        self.save_model_summary()
 
     
     def setup_structure(self):

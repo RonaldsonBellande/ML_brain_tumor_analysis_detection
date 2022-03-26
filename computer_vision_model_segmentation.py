@@ -1,6 +1,6 @@
 from header_imports import *
 
-class computer_vision_segmentation(object):
+class segmentation(object):
     def __init__(self, save_model, number_classes):
         
         self.image_file = []
