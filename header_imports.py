@@ -66,6 +66,9 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, TensorB
 from tensorflow.keras.utils import to_categorical
 import matplotlib.image as img
 
+import gym
+from gym import error, spaces, utils
+
 from contextlib import redirect_stdout
 from multiprocessing import Pool
 warnings.filterwarnings('ignore')
