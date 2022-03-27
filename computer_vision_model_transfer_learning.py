@@ -1,7 +1,7 @@
 from header_imports import *
 
 
-class transfer_learning(model):
+class transfer_learning(models):
     def __init__(self, save_model, model_type, number_classes, image_type, random_noise_count):
         
         self.image_file = []
@@ -26,11 +26,11 @@ class transfer_learning(model):
         self.splitting_data_normalize()
         
         if self.model_type == "model1":
-            self.create_models_1()
+            self.model = self.create_models_1()
         elif self.model_type == "model2":
-            self.create_models_2()
+            self.model = self.create_models_2()
         elif self.model_type == "model3":
-            self.create_model_3()
+            self.model = self.create_model_3()
 
         self.model.load_weights("models/" + self.save_model)
         self.batch_size = [10, 20, 40, 60, 80, 100]
@@ -136,87 +136,6 @@ class transfer_learning(model):
         self.Y_test = tf.keras.utils.to_categorical(self.Y_test_vec, self.number_classes)
         self.X_train = self.X_train.astype("float32") /255
         self.X_test = self.X_test.astype("float32") / 255
-
-
-    def create_models_1(self):
-
-        self.model = Sequential()
-        self.model.add(Conv2D(filters=64, kernel_size=(7,7), strides = (1,1), padding="same", input_shape = self.input_shape, activation = "relu"))
-        self.model.add(MaxPooling2D(pool_size = (4,4)))
-        self.model.add(Dropout(0.25))
-        self.model.add(Conv2D(filters=32, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
-        self.model.add(MaxPooling2D(pool_size = (2,2)))
-        self.model.add(Dropout(0.25))
-        self.model.add(Conv2D(filters=16, kernel_size=(7,7), strides = (1,1), padding="same", activation = "relu"))
-        self.model.add(MaxPooling2D(pool_size = (1,1)))
-        self.model.add(Dropout(0.25))
-        self.model.add(Flatten())
-        self.model.add(Dense(units = self.number_classes, activation = "softmax", input_dim=2))
-        self.model.compile(loss = "binary_crossentropy", optimizer="adam", metrics=["accuracy"])
-
-        return self.model
-
-    
-    def create_models_2(self):
-
-        self.model = Sequential()
-        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu", input_shape = self.input_shape))
-        self.model.add(Conv2D(filters=32, kernel_size=(3,3), activation="relu"))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
-        self.model.add(Dropout(rate=0.25))
-        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
-        self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation="relu"))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
-        self.model.add(Dropout(rate=0.25))
-        self.model.add(Flatten())
-        self.model.add(Dense(units=self.number_of_nodes, activation="relu"))
-        self.model.add(Dropout(rate=0.5))
-        self.model.add(Dense(units = self.number_classes, activation="softmax"))
-        self.model.compile(loss = 'binary_crossentropy', optimizer ='adam', metrics= ['accuracy'])
-	
-        return self.model
-
-
-    def create_model_3(self):
-
-        self.model = Sequential()
-        self.MyConv(first = True)
-        self.MyConv()
-        self.MyConv()
-        self.MyConv()
-        self.model.add(Flatten())
-        self.model.add(Dense(units = self.number_classes, activation = "softmax", input_dim=2))
-        self.model.compile(loss = "binary_crossentropy", optimizer ="adam", metrics= ["accuracy"])
-        
-        return self.model
-        
-
-    def MyConv(self, first = False):
-        if first == False:
-            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding="same",
-                input_shape = self.input_shape))
-        else:
-            self.model.add(Conv2D(64, (4, 4),strides = (1,1), padding="same",
-                 input_shape = self.input_shape))
-    
-        self.model.add(Activation("relu"))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
-        self.model.add(Dropout(0.5))
-        self.model.add(Conv2D(32, (4, 4),strides = (1,1),padding="same"))
-        self.model.add(Activation("relu"))
-        self.model.add(Dropout(0.25))
-
-
-    def create_model_4(self):
-        
-        for layer in self.model.layers:
-            layer.trainable = False
-    
-        self.model.add(Flatten())
-        self.model.add(Dense(units = self.number_classes, activation = "softmax"))
-        self.model.compile(loss = "binary_crossentropy", optimizer="adam", metrics=["accuracy"])
-
-        return self.model
 
 
     def train_model(self):
