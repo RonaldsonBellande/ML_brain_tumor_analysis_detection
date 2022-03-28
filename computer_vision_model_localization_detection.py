@@ -1,12 +1,12 @@
 from header_imports import *
 
 class localization_detection(object):
-    def __init__(self, save_model, number_classes):
+    def __init__(self, saved_model, number_classes):
         
         self.image_file = []
         self.predicted_classes_array = []
-        self.save_model = save_model
-        self.model = keras.models.load_model("models/" + self.save_model)
+        self.saved_model = saved_model
+        self.model = keras.models.load_model("models/" + self.saved_model)
         self.image_path = "brain_cancer_category_2/" + "Testing2/"
 
         self.xmin = None
@@ -314,7 +314,7 @@ class localization_detection(object):
                         image_resized=cv2.rectangle(image_resized, self.box_index[jjj][0], self.box_index[jjj][1], self.color[np.argmax(prediction[i], axis=0)], self.thickness)
                         cv2.putText(image_resized, str((self.model_categpory[np.argmax(prediction[i], axis=0)])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
-                    cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
+                    cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.saved_model) + str(image) + '.png', image_resized)
 
                 if self.number_classes == 4:
                     for r in range(0,image_resized.shape[0],int(math.sqrt(self.split_size))):
@@ -332,7 +332,7 @@ class localization_detection(object):
                                 cv2.putText(image_resized, str((self.model_categpory[np.argmax(self.predicted_classes[i], axis=0)])), first_predicting_position, self.font, self.fontScale, self.color[np.argmax(self.predicted_classes[i], axis=0)], self.thickness, cv2.LINE_AA)
 
 
-                    cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + '.png', image_resized)
+                    cv2.imwrite(self.graph_path_localization + "model_segmenation_with_model_trained_prediction_" + str(self.saved_model) + str(image) + '.png', image_resized)
 
 
 

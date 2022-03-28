@@ -2,14 +2,14 @@ from header_imports import *
 
 
 class transfer_learning(models):
-    def __init__(self, save_model, model_type, number_classes, image_type, random_noise_count):
+    def __init__(self, saved_model, model_type, number_classes, image_type, random_noise_count):
         
         self.image_file = []
         self.label_name = []
         self.number_classes = int(number_classes)
         self.random_noise_count = int(random_noise_count)
         self.image_size = 240
-        self.save_model = save_model
+        self.saved_model = saved_model
         self.number_of_nodes = 16
         self.true_path  = "brain_cancer_category_2/"
         self.image_type = image_type
@@ -32,7 +32,7 @@ class transfer_learning(models):
         elif self.model_type == "model3":
             self.model = self.create_model_3()
 
-        self.model.load_weights("models/" + self.save_model)
+        self.model.load_weights("models/" + self.saved_model)
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
         self.number_images_to_plot = 16
@@ -195,6 +195,6 @@ class transfer_learning(models):
             plt.axis('off')
             plt.title("Predicted - {}".format(self.category_names[np.argmax(predicted_classes[i], axis=0)]) + "\n Actual - {}".format(self.category_names[np.argmax(self.Y_test_vec[i,0])]),fontsize=1)
             plt.tight_layout()
-            plt.savefig(self.graph_path + "model_detection_localization_with_model_trained_prediction_" + str(self.save_model) + '.png')
+            plt.savefig(self.graph_path + "model_detection_localization_with_model_trained_prediction_" + str(self.saved_model) + '.png')
 
         

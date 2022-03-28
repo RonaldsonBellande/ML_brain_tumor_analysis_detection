@@ -1,12 +1,12 @@
 from header_imports import *
 
 class segmentation(object):
-    def __init__(self, save_model, number_classes):
+    def __init__(self, saved_model, number_classes):
         
         self.image_file = []
         self.predicted_classes_array = []
-        self.save_model = save_model
-        self.model = keras.models.load_model("models/" + self.save_model)
+        self.saved_model = saved_model
+        self.model = keras.models.load_model("models/" + self.saved_model)
         self.image_path = "brain_cancer_category_2/" + "Testing2/" 
 
         self.image_size = 240
@@ -96,7 +96,7 @@ class segmentation(object):
                                     image_resized=cv2.putText(image_resized, str((self.model_categpory[i])), word_point, self.font, self.fontScale, self.color[i], self.thickness, cv2.LINE_AA)
 
                     image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
-                    cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model)  + str(image) + str(j) + '.png', image_resized)
+                    cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.saved_model)  + str(image) + str(j) + '.png', image_resized)
            
                 if self.number_classes == 4:
                     for i in range(len(self.model_categpory)):
@@ -114,7 +114,7 @@ class segmentation(object):
             
 
                     image_resized=cv2.addWeighted(image_resized, self.alpha, image_resized_original, (1-self.alpha), 3, image_resized_original)
-                    cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.save_model) + str(image) + str(j) + '.png', image_resized)
+                    cv2.imwrite(self.graph_path_detection + "model_segmenation_with_model_trained_prediction_" + str(self.saved_model) + str(image) + str(j) + '.png', image_resized)
 
 
 

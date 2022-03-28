@@ -57,7 +57,7 @@ class plot_graphs(object):
             plt.axis('off')
             plt.title("Predicted - {}".format(self.model_category[np.argmax(predicted_classes[i], axis=0)]), fontsize=1)
             plt.tight_layout()
-            plt.savefig(self.graph_path + "model_classification_detection_with_model_trained_prediction_continuous_learning" + str(self.save_model) + '.png')
+            plt.savefig(self.graph_path + "model_classification_detection_with_model_trained_prediction_continuous_learning" + str(self.saved_model) + '.png')
 
 
     
