@@ -90,9 +90,6 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
             for i in range(self.number_classes):
                 self.resize_image_and_label_image(self.category_names[i])
 
-        else:
-            print("Detection Variety out of bounds")
-
 
         self.label_name = self.labelencoder.fit_transform(self.label_name)
         self.image_file = np.array(self.image_file)
