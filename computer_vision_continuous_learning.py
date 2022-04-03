@@ -42,7 +42,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         self.step_per_episode = []
 
         deep_q_learning.__init__(self, saved_model=self.saved_model, model_type=self.model_type, dense_size=self.dense_size, batch_size=self.batch_size[3], exploration_decay=self.exploration_decay, algorithm_name=self.algorithm_name, transfer_learning=self.transfer_learning)
-        classification_enviroment.__init__(self, number_classes=self.number_classes, data_set=(self.pointcloud, self.label_name), image_per_episode=self.image_per_episode)
+        classification_enviroment.__init__(self, number_classes=self.number_classes, data_set=(self.image_file, self.label_name), image_per_episode=self.image_per_episode)
 
         if self.algorithm_name == "deep_q_learning":
             self.deep_q_learning()
@@ -57,9 +57,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
     def setup_structure(self):
         
         if self.number_classes == 2:
-
             self.path  = "brain_cancer_category_2/"
-            
             if self.image_type == "normal":
                 self.true_path = self.path + "brain_cancer_seperate_category_2/"
             elif self.image_type == "edge_1":
@@ -77,9 +75,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
                 self.resize_image_and_label_image(self.category_names[i])
 
         elif self.number_classes == 4:
-            
             self.path = "brain_cancer_category_4/"
-            
             if self.image_type == "normal":
             	self.true_path = self.path + "brain_cancer_seperate_category_4/"
             elif self.image_type == "edge_1":
@@ -102,25 +98,14 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         self.label_name = self.label_name.reshape((len(self.image_file),1))
 
 
-    def setup_structure(self):
 
-        self.category_names =  os.listdir(self.true_path)
-        self.number_classes = len(next(os.walk(self.true_path))[1])
-        
-        for i in range(self.number_classes):
-            self.check_valid(self.category_names[i])
-        
-        for label in self.category_names:
-            self.pointcloud_file = [self.true_path + label + '/' + i for i in os.listdir(self.true_path + '/' + label)]
-            for point in self.pointcloud_file:
-                self.pointcloud.append(trimesh.load(point).sample(self.number_of_points))
-                self.label_name.append(label)
-        
-        self.label_name = self.labelencoder.fit_transform(self.label_name)
-        self.pointcloud = np.array(self.pointcloud)
-        self.pointcloud =  self.pointcloud.reshape(self.pointcloud.shape[0], self.pointcloud.shape[1], self.pointcloud.shape[2], 1)
-        self.label_name = np.array(self.label_name)
-        self.label_name = tf.keras.utils.to_categorical(self.label_name , num_classes=self.number_classes)
+    def resize_image_and_label_image(self, input_file):
+        for image in os.listdir(self.true_path + input_file):
+            
+            image_resized = cv2.imread(os.path.join(self.true_path + input_file,image))
+            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
+            self.image_file.append(image_resized)
+            self.label_name.append(input_file)
 
 
     def check_valid(self, input_file):

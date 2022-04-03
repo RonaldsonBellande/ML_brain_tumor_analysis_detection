@@ -49,9 +49,7 @@ class transfer_learning(models):
     def setup_structure(self):
         
         if self.number_classes == 2:
-
             self.path  = "brain_cancer_category_2/"
-            
             if self.image_type == "normal":
                 self.true_path = self.path + "brain_cancer_seperate_category_2/"
             elif self.image_type == "edge_1":
@@ -69,9 +67,7 @@ class transfer_learning(models):
                 self.resize_image_and_label_image(self.category_names[i])
 
         elif self.number_classes == 4:
-            
             self.path = "brain_cancer_category_4/"
-            
             if self.image_type == "normal":
             	self.true_path = self.path + "brain_cancer_seperate_category_4/"
             elif self.image_type == "edge_1":
