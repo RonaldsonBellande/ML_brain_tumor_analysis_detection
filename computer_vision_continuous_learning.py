@@ -2,7 +2,7 @@ from header_imports import *
 
 
 class continuous_learning(deep_q_learning, classification_enviroment, plot_graphs):
-    def __init__(self, saved_model, model_type, number_classes, episode, noise=0.0, reward_noise=0.0, state_world_size=400, algorithm_name="deep_q_learning", transfer_learning="true"):
+    def __init__(self, saved_model, model_type, number_classes, image_type, episode, noise=0.0, reward_noise=0.0, state_world_size=400, algorithm_name="deep_q_learning", transfer_learning="true"):
         
         self.algorithm_details_path = "graphs_charts/"
         self.algorithm_details = self.algorithm_details_path + "algorithm_details/"
@@ -10,6 +10,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         self.graph_path = self.algorithm_details_path + "continuous_learning_with_models/"
        
         self.number_classes = int(number_classes)
+        self.image_type = image_type
         self.dense_size = 10
         self.exploration_decay = 0.95
         self.pointcloud = []
