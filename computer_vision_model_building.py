@@ -15,12 +15,9 @@ class model_building(models):
         self.number_classes = int(number_classes)
         self.image_size = 240
         self.number_of_nodes = 16
-        self.true_path  = "brain_cancer_category_2/"
         self.image_type = image_type
 
         self.valid_images = [".jpg",".png"]
-        self.categories = ["False","True"]
-        self.advanced_categories = ["False", "glioma_tumor", "meningioma_tumor", "pituitary_tumor"]
         self.model = None
         self.model_summary = "model_summary/"
         self.optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999)
@@ -42,47 +39,46 @@ class model_building(models):
     
     def setup_structure(self):
         
-        if self.image_type == "normal":
-            self.true_path = self.true_path + "brain_cancer_seperate_category_2/"
-        elif self.image_type == "edge_1":
-            self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_1/"
-        elif self.image_type == "edge_2":
-            self.true_path = self.true_path + "brain_cancer_seperate_category_2_edge_2/"
-
         if self.number_classes == 2:
 
-            self.category_names = self.categories 
+            self.path  = "brain_cancer_category_2/"
             
-            self.check_valid(self.categories[0])
-            self.check_valid(self.categories[1])
+            if self.image_type == "normal":
+                self.true_path = self.path + "brain_cancer_seperate_category_2/"
+            elif self.image_type == "edge_1":
+                self.true_path = self.path + "brain_cancer_seperate_category_2_edge_1/"
+            elif self.image_type == "edge_2":
+                self.true_path = self.path + "brain_cancer_seperate_category_2_edge_2/"
             
-            self.resize_image_and_label_image(self.categories[0])
-            self.resize_image_and_label_image(self.categories[1])
+            self.category_names =  os.listdir(self.true_path)
+            self.number_classes = len(next(os.walk(self.true_path))[1])
+            
+            for i in range(self.number_classes):
+                self.check_valid(self.category_names[i])
+
+            for i in range(self.number_classes):
+                self.resize_image_and_label_image(self.category_names[i])
 
         elif self.number_classes == 4:
             
-            self.category_names = self.advanced_categories 
-            self.true_path = "brain_cancer_category_4/"
-            if self.image_type == "normal":
-            	self.true_path = self.true_path + "brain_cancer_seperate_category_4/"
-            elif self.image_type == "edge_1":
-                self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_1/"
-            elif self.image_type == "edge_2":
-                self.true_path = self.true_path + "brain_cancer_seperate_category_4_edge_2/"
-             
-            self.check_valid(self.advanced_categories[0])
-            self.check_valid(self.advanced_categories[1])
-            self.check_valid(self.advanced_categories[2])
-            self.check_valid(self.advanced_categories[3])
+            self.path = "brain_cancer_category_4/"
             
-            self.resize_image_and_label_image(self.advanced_categories[0])
-            self.resize_image_and_label_image(self.advanced_categories[1])
-            self.resize_image_and_label_image(self.advanced_categories[2])
-            self.resize_image_and_label_image(self.advanced_categories[3])
+            if self.image_type == "normal":
+            	self.true_path = self.path + "brain_cancer_seperate_category_4/"
+            elif self.image_type == "edge_1":
+                self.true_path = self.path + "brain_cancer_seperate_category_4_edge_1/"
+            elif self.image_type == "edge_2":
+                self.true_path = self.path + "brain_cancer_seperate_category_4_edge_2/"
+            
+            self.category_names =  os.listdir(self.true_path)
+            self.number_classes = len(next(os.walk(self.true_path))[1])
+            
+            for i in range(self.number_classes):
+                self.check_valid(self.category_names[i])
+            
+            for i in range(self.number_classes):
+                self.resize_image_and_label_image(self.category_names[i])
 
-        else:
-            print("Detection Variety out of bounds")
-        
         self.label_name = self.labelencoder.fit_transform(self.label_name)
         self.image_file = np.array(self.image_file)
         self.label_name = np.array(self.label_name)
