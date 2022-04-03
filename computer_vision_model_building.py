@@ -90,7 +90,6 @@ class model_building(models):
 
     def resize_image_and_label_image(self, input_file):
         for image in os.listdir(self.true_path + input_file):
-            
             image_resized = cv2.imread(os.path.join(self.true_path + input_file,image))
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
