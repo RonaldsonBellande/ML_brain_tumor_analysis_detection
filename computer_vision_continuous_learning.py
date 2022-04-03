@@ -8,7 +8,6 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         self.algorithm_details = self.algorithm_details_path + "algorithm_details/"
         self.model_detail = self.algorithm_details_path + "model_details/"
         self.graph_path = self.algorithm_details_path + "continuous_learning_with_models/"
-        self.model_category = ['toilet', 'monitor', 'dresser', 'sofa', 'table', 'night_stand', 'chair', 'bathtub', 'bed', 'desk']
        
         self.number_classes = int(number_classes)
         self.dense_size = 10
