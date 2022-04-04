@@ -11,9 +11,10 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
        
         self.number_classes = int(number_classes)
         self.image_type = image_type
+        self.image_size = 240
         self.dense_size = 10
         self.exploration_decay = 0.95
-        self.pointcloud = []
+        self.image_file = []
         self.label_name = []
         self.saved_model = saved_model
         self.model_type = model_type
@@ -28,7 +29,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         self.setup_structure()
         self.splitting_data_normalize()
 
-        self.image_per_episode = int(math.sqrt(len(self.pointcloud)))
+        self.image_per_episode = int(math.sqrt(len(self.image_file)))
         self.train_initial_model = "false"
         self.algorithm_name = algorithm_name
         self.transfer_learning = transfer_learning
@@ -116,7 +117,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
 
     def splitting_data_normalize(self):
         
-        self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.pointcloud, self.label_name, test_size = 0.10, random_state = 42)
+        self.X_train, self.X_test, self.Y_train_vec, self.Y_test_vec = train_test_split(self.image_file, self.label_name, test_size = 0.10, random_state = 42)
         self.input_shape = self.X_train.shape[1:]
         self.Y_train = tf.keras.utils.to_categorical(self.Y_train_vec, self.number_classes)
         self.Y_test = tf.keras.utils.to_categorical(self.Y_test_vec, self.number_classes)

@@ -33,8 +33,8 @@ class transfer_learning(models):
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
         self.number_images_to_plot = 16
-        self.graph_path = "graph_charts/" + "transfer_learning_with_model/"
-        self.model_path = "models/" 
+        self.graph_path = "graph_charts/transfer_learning_with_model/"
+        self.model_path = "models/transfer_learning/" 
         self.param_grid = dict(batch_size=self.batch_size, epochs=self.epochs)
         self.callback_1 = TensorBoard(log_dir="logs/{}-{}".format(self.model_type, int(time.time())))
         self.callback_2 = ModelCheckpoint(filepath=self.model_path, save_weights_only=True, verbose=1)
@@ -136,13 +136,13 @@ class transfer_learning(models):
         grid = GridSearchCV(estimator = self.model, param_grid = self.param_grid, n_jobs = 1, cv = 3, verbose = 10)
 
         self.computer_vision_model = self.model.fit(self.X_train, self.Y_train,
-                batch_size=self.batch_size[3],
+                batch_size=self.batch_size[0],
                 validation_split=0.15,
                 epochs=self.epochs[3],
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
 
-        self.model.save(self.model_path + self.model_type + "_computer_vision_categories_"+ str(self.number_classes)+"_model.h5")
+        self.model.save(self.model_path + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
 
     def evaluate_model(self):
