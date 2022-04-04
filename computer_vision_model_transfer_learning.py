@@ -142,7 +142,7 @@ class transfer_learning(models):
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
 
-        self.model.save(self.model_path + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
+        self.model.save(self.model_path + self.image_type + "_" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
 
     def evaluate_model(self):

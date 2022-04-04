@@ -35,7 +35,7 @@ class model_training(model_building):
                 shuffle=True)
        
         self.get_training_time("ending --: ")
-        self.model.save("models/" + self.image_type + "_" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
+        self.model.save(self.model_path + self.image_type + "_" + self.model_type + "_brain_tumor_categories_"+ str(self.number_classes)+"_model.h5")
    
 
     def evaluate_model(self):
