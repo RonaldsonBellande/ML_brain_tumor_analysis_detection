@@ -52,7 +52,7 @@
 # python3 computer_vision_analysis.py image_prediction 4 model3
 
 
-python3 computer_vision_analysis.py transfer_learning 2 model1 normal 2
+# python3 computer_vision_analysis.py transfer_learning 2 model1 normal 2
 # python3 computer_vision_analysis.py transfer_learning 2 model2 normal 2
 # python3 computer_vision_analysis.py transfer_learning 2 model3 normal 2
 

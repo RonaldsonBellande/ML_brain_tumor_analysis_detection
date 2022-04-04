@@ -65,6 +65,7 @@ from tensorflow.keras.layers import Conv2D, Flatten, Dense, MaxPooling2D, Dropou
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, TensorBoard, ModelCheckpoint
 from tensorflow.keras.utils import to_categorical
 import matplotlib.image as img
+from collections import deque
 
 import gym
 from gym import error, spaces, utils

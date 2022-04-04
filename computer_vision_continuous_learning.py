@@ -4,7 +4,7 @@ from header_imports import *
 class continuous_learning(deep_q_learning, classification_enviroment, plot_graphs):
     def __init__(self, saved_model, model_type, number_classes, image_type, episode, noise=0.0, reward_noise=0.0, state_world_size=400, algorithm_name="deep_q_learning", transfer_learning="true"):
         
-        self.algorithm_details_path = "graphs_charts/"
+        self.algorithm_details_path = "graph_charts/"
         self.algorithm_details = self.algorithm_details_path + "algorithm_details/"
         self.model_detail = self.algorithm_details_path + "model_details/"
         self.graph_path = self.algorithm_details_path + "continuous_learning_with_models/"
@@ -43,7 +43,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
 
         deep_q_learning.__init__(self, saved_model=self.saved_model, model_type=self.model_type, dense_size=self.dense_size, batch_size=self.batch_size[3], exploration_decay=self.exploration_decay, algorithm_name=self.algorithm_name, transfer_learning=self.transfer_learning)
         classification_enviroment.__init__(self, number_classes=self.number_classes, data_set=(self.image_file, self.label_name), image_per_episode=self.image_per_episode)
-
+        
         if self.algorithm_name == "deep_q_learning":
             self.deep_q_learning()
         elif self.algorithm_name == "double_deep_q_learning":

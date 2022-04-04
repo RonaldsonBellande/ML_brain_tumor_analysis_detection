@@ -18,7 +18,6 @@ class deep_q_learning(models):
         self.learning_rate = 0.001
         self.epochs = [1, 5, 15, 50, 100, 200]
         self.model_path = "models/transfer_learning/" + self.saved_model
-        print(self.saved_model)
         self.model_save_path =  "models/continuous_learning/" + self.saved_model
         self.optimizer = tf.keras.optimizers.Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999)
         self.transfer_learning = transfer_learning

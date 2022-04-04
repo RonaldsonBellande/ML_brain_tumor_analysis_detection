@@ -75,7 +75,7 @@ if __name__ == "__main__":
                 elif sys.argv[3] == "model3":
                     input_model = "normal_model3_brain_tumor_categories_4_model.h5"
             
-            computer_vision_analysis_obj = continuous_learning(saved_model=input_model, model_type=sys.argv[3], number_classes=sys.argv[2], image_type=sys.argv[4], episode=30, algorithm_name=sys.argv[4], transfer_learning="true")
+            computer_vision_analysis_obj = continuous_learning(saved_model=input_model, model_type=sys.argv[3], number_classes=sys.argv[2], image_type=sys.argv[4], episode=5, algorithm_name=sys.argv[5], transfer_learning="true")
 
         if sys.argv[1] == "localization_detection":
             
