@@ -103,21 +103,34 @@ class transfer_learning(models):
             image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
             self.label_name.append(input_file)
-            # self.adding_random_noise(image_resized, input_file)
+            self.adding_random_noise(image_resized, input_file)
 
 
     def adding_random_noise(self, image, input_file):
         
-        mean = 0
-        var = 10
-        sigma = (var ** 0.5)
-        
+        # Gaussian noise 
         for i in range(self.random_noise_count):
-            gaussian = np.random.normal(mean, sigma, (image.shape[0], image.shape[1]))
+            # mean, sigma = (var **0.5)
+            gaussian = np.random.normal(0, (10 **0.5), (image.shape[0], image.shape[1]))
             image[:, :, 0] = image[:, :, 0] + gaussian
             image[:, :, 1] = image[:, :, 1] + gaussian
             image[:, :, 2] = image[:, :, 2] + gaussian
             
+            self.image_file.append(image)
+            self.label_name.append(input_file)
+
+
+        # Salt and pepper noise 
+        for i in range(self.random_noise_count):
+            probability = 0.02
+            for i in range(image.shape[0]):
+                for j in range(image.shape[1]):
+                    random_num = random.random()
+                    if random_num < probability:
+                        image[i][j] = 0
+                    elif random_num > (1 - probability):
+                        image[i][j] = 255
+           
             self.image_file.append(image)
             self.label_name.append(input_file)
 
