@@ -21,8 +21,6 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         self.epochs = [1, 5, 15, 50, 100, 200]
         self.number_of_points = 2048
         self.model_path = "models/continuous_learning/" 
-        self.path  = "PointCloud_data/"
-        self.true_path = self.path + "Additional_Data/"
         self.number_images_to_plot = 16
         self.valid_images = [".off"]
         self.labelencoder = LabelEncoder()
@@ -60,7 +58,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         if self.number_classes == 2:
             self.path  = "brain_cancer_category_2/"
             if self.image_type == "normal":
-                self.true_path = self.path + "brain_cancer_seperate_category_2/"
+                self.true_path = self.path + "Additional_Data/"
             elif self.image_type == "edge_1":
                 self.true_path = self.path + "brain_cancer_seperate_category_2_edge_1/"
             elif self.image_type == "edge_2":
@@ -78,7 +76,7 @@ class continuous_learning(deep_q_learning, classification_enviroment, plot_graph
         elif self.number_classes == 4:
             self.path = "brain_cancer_category_4/"
             if self.image_type == "normal":
-            	self.true_path = self.path + "brain_cancer_seperate_category_4/"
+                self.true_path = self.path + "Additional_Data/"
             elif self.image_type == "edge_1":
                 self.true_path = self.path + "brain_cancer_seperate_category_4_edge_1/"
             elif self.image_type == "edge_2":
