@@ -110,12 +110,8 @@ class transfer_learning(models):
         
         # Gaussian noise 
         for i in range(self.random_noise_count):
-            # mean, sigma = (var **0.5)
-            gaussian = np.random.normal(0, (10 **0.5), (image.shape[0], image.shape[1]))
-            image[:, :, 0] = image[:, :, 0] + gaussian
-            image[:, :, 1] = image[:, :, 1] + gaussian
-            image[:, :, 2] = image[:, :, 2] + gaussian
-            
+            gaussian_noise = np.random.normal(0, (10 **0.5), image.shape)
+            image = image + gaussian_noise
             self.image_file.append(image)
             self.label_name.append(input_file)
 
@@ -130,7 +126,6 @@ class transfer_learning(models):
                         image[i][j] = 0
                     elif random_num > (1 - probability):
                         image[i][j] = 255
-           
             self.image_file.append(image)
             self.label_name.append(input_file)
 
@@ -139,7 +134,22 @@ class transfer_learning(models):
         for i in range(self.random_noise_count):
             poisson_noise = np.sqrt(image) * np.random.normal(0, 1, image.shape)
             noisy_image = image + poisson_noise
+            self.image_file.append(image)
+            self.label_name.append(input_file)
 
+
+        # Speckle noise
+        for i in range(self.random_noise_count):
+            speckle_noise = np.random.normal(0, (10 **0.5), image.shape)
+            image = image + image * speckle_noise
+            self.image_file.append(image)
+            self.label_name.append(input_file)
+
+
+        # Uniform noise
+        for i in range(self.random_noise_count):
+            uniform_noise = np.random.uniform(0,(10 **0.5), image.shape)
+            image = image + uniform_noise
             self.image_file.append(image)
             self.label_name.append(input_file)
 

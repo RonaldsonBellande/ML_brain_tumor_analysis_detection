@@ -98,17 +98,16 @@ else:
    print("CPU")
 
 
-from all_models import *
-from plot_and_animation import *
 from utilities import *
-from computer_vision_model_building import *
-from computer_vision_model_training import *
-from computer_vision_model_classification import *
-from computer_vision_model_prediction import *
-from computer_vision_model_localization_detection import *
-from computer_vision_model_segmentation import *
-from computer_vision_model_transfer_learning import *
-from deep_learning_model import *
-from image_enviroment import *
-from computer_vision_continuous_learning import *
-from pointcloud_imagery import *
+from all_models import *
+from computer_vision_system.plot_and_animation import *
+from computer_vision_system.computer_vision_model_building import *
+from computer_vision_system.computer_vision_model_training import *
+from computer_vision_system.computer_vision_model_classification import *
+from computer_vision_system.computer_vision_model_prediction import *
+from computer_vision_system.computer_vision_model_localization_detection import *
+from computer_vision_system.computer_vision_model_segmentation import *
+from computer_vision_system.computer_vision_model_transfer_learning import *
+from computer_vision_system.deep_learning_model import *
+from computer_vision_system.image_enviroment import *
+from computer_vision_system.computer_vision_continuous_learning import *
