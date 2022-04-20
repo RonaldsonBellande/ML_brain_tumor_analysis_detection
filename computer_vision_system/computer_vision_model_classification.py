@@ -12,7 +12,6 @@ class classification_with_model(object):
         self.image_size = 240
         self.number_classes = int(number_classes)
         self.number_images_to_plot = 9
-
         self.graph_path = "graph_charts/" + "prediction_with_model_saved/"
 
         if self.number_classes == 2:
@@ -33,7 +32,7 @@ class classification_with_model(object):
 
         for image in os.listdir(self.image_path):
             image_resized = cv2.imread(os.path.join(self.image_path, image))
-            image_resized = cv2.resize(image_resized,(self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
+            image_resized = cv2.resize(image_resized, (self.image_size, self.image_size), interpolation = cv2.INTER_AREA)
             self.image_file.append(image_resized)
         
         self.image_file = np.array(self.image_file)

@@ -2,8 +2,8 @@ from header_imports import *
 
 
 class model_training(model_building):
-    def __init__(self, number_classes, model_type, image_type):
-        super().__init__(number_classes, model_type, image_type)
+    def __init__(self, number_classes, model_type, image_type, random_noise_count):
+        super().__init__(number_classes, model_type, image_type, random_noise_count)
 
         self.batch_size = [10, 20, 40, 60, 80, 100]
         self.epochs = [1, 5, 10, 50, 100, 200]
@@ -28,9 +28,9 @@ class model_training(model_building):
         self.get_training_time("starting --: ")
 
         self.brain_cancer_model = self.model.fit(self.X_train, self.Y_train,
-                batch_size=self.batch_size[1],
+                batch_size=self.batch_size[0],
                 validation_split=0.15,
-                epochs=self.epochs[4],
+                epochs=self.epochs[0],
                 callbacks=[self.callback_1, self.callback_2, self.callback_3],
                 shuffle=True)
        

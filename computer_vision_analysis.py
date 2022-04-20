@@ -12,10 +12,10 @@ if __name__ == "__main__":
             util.seperate_image_into_file()
 
         if sys.argv[1] == "model_building":
-            brain_analysis_obj = model_building(number_classes=sys.argv[2], model_type=sys.argv[3], image_type=sys.argv[4])
+            brain_analysis_obj = model_building(number_classes=sys.argv[2], model_type=sys.argv[3], image_type=sys.argv[4], random_noise_count=sys.argv[5])
 
         if sys.argv[1] == "model_training":
-            brain_analysis_obj = model_training(number_classes=sys.argv[2], model_type=sys.argv[3], image_type=sys.argv[4])
+            brain_analysis_obj = model_training(number_classes=sys.argv[2], model_type=sys.argv[3], image_type=sys.argv[4], random_noise_count=sys.argv[5])
 
         if sys.argv[1] == "image_prediction":
              

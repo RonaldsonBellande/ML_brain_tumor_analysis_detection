@@ -83,7 +83,7 @@ info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
 if info.free < 964157696:
    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 device_name = [x.name for x in device_lib.list_local_devices() if x.device_type == 'GPU']
 
 if device_name != []:
@@ -96,7 +96,6 @@ else:
    device_name = "/device:CPU:0"
    tensorflow_strategy = tf.distribute.MirroredStrategy(["CPU:0"])
    print("CPU")
-
 
 from utilities import *
 from all_models import *

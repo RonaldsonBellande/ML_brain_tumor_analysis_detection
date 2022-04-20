@@ -1,7 +1,7 @@
 from header_imports import *
 
 class model_building(models):
-    def __init__(self, number_classes, model_type, image_type):
+    def __init__(self, number_classes, model_type, image_type, random_noise_count):
 
         """
         False - 0
@@ -13,10 +13,10 @@ class model_building(models):
         self.image_file = []
         self.label_name = []
         self.number_classes = int(number_classes)
+        self.random_noise_count = int(random_noise_count)
         self.image_size = 240
         self.number_of_nodes = 16
         self.image_type = image_type
-
         self.valid_images = [".jpg",".png"]
         self.model = None
         self.model_summary = "model_summary/"
